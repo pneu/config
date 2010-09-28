@@ -1,0 +1,35 @@
+## setting the prefix with screen command
+escape ^j^j
+
+
+## setting environment
+defkanji euc		## accept japanese
+defencoding euc		## char encoding
+startup_message off
+autodetach on
+#shelltitle "$ |bash"	# default shell title
+hardstatus alwayslastline "%H[%n] [%w]"
+hardcopydir "$HOME/var/screen/hardcopy/"
+defscrollback 4000
+#scrollback 4000
+
+
+## startup shell
+shell zsh
+
+
+## key bind after prefix(=escape)
+#bind s			# suspend terminal: off
+bind s split
+bind l windowlist
+bind o only
+bind ^O only
+#bind \040 screen	# 040 as octal equals space(
+#bind \040 focus
+
+
+## 256 colors on vim
+## (See http://vim-users.jp/2009/08/hack64/)
+attrcolor b ".I"
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;%dm'
+defbce on

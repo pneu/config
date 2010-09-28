@@ -1,0 +1,87 @@
+# keymap - w3m keymap file
+#
+# $Id$
+
+keymap	C-f	NEXT_PAGE
+keymap	C-b	PREV_PAGE
+#keymap	l	MOVE_RIGHT1
+#keymap	h	MOVE_LEFT1
+#keymap	j	MOVE_DOWN1
+#keymap	k	MOVE_UP1
+keymap	l	MOVE_RIGHT1
+keymap	h	MOVE_LEFT1
+keymap	j	MOVE_DOWN1
+keymap	k	MOVE_UP1
+
+keymap	K	DOWN
+keymap	C-y	DOWN
+keymap	^[[B	DOWN
+keymap	J	UP
+keymap	C-e	UP
+keymap	^[[A	UP
+keymap	<	SHIFT_LEFT
+keymap	>	SHIFT_RIGHT
+keymap	,	LEFT
+keymap	^[[D	LEFT
+keymap	.	RIGHT
+keymap	^[[C	RIGHT
+keymap	0	LINE_BEGIN
+keymap	C-a	LINE_BEGIN
+keymap	$	LINE_END
+#keymap	C-e	LINE_END
+keymap	Z	CENTER_H
+keymap	z	CENTER_V
+keymap	C-G	GOTO_LINE
+keymap	gg	BEGIN
+keymap	G	END
+keymap	W	NEXT_WORD
+keymap	B	PREV_WORD
+#keymap	[	LINK_BEGIN
+#keymap	]	LINK_END
+keymap	]]	NEXT_LINK
+keymap	[[	PREV_LINK
+keymap	ESC-m	MOVE_LIST_MENU
+keymap	``	UNDO
+keymap	u	UNDO
+keymap	C-r	REDO
+
+keymap	C-j	GOTO_LINK
+keymap	C-]	GOTO_LINK
+keymap	C-J	TAB_LINK
+keymap	C-s	SAVE_LINK
+keymap	I	VIEW_IMAGE
+keymap	ESC-I	SAVE_IMAGE
+keymap	c	PEEK
+keymap	C	PEEK_LINK
+keymap	i	PEEK_IMG
+keymap	=	INFO
+keymap	C-g	LINE_INFO
+keymap	:	MARK_URL
+#keymap	;	MARK_WORD
+#keymap	ESC-:	MARK_MID
+keymap	L	LIST
+
+keymap	o	GOTO
+keymap	O	GOTO_RELATIVE
+keymap	t	TAB_GOTO
+keymap	T	TAB_GOTO_RELATIVE
+
+keymap	C-i	NEXT
+keymap	C-o	PREV
+keymap	b	SELECT_MENU
+
+keymap	C-t	NEW_TAB
+keymap	C-w	CLOSE_TAB
+keymap	C-n	NEXT_TAB
+keymap	C-p	PREV_TAB
+
+keymap	/	SEARCH_FORE
+keymap	?	SEARCH_BACK
+keymap	n	SEARCH_NEXT
+keymap	N	SEARCH_PREV
+
+
+keymap	C-m	MENU
+keymap	C-O	OPTIONS
+keymap	q	QUIT
+keymap	Q	EXIT

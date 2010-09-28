@@ -1,0 +1,34 @@
+" 1.2 (created: 2008/08/16 18:51:52)
+" .vimperator settings	{{{1
+"
+"	`set!' changes Firefox preferences.
+"	`set' changes vimperator settings.
+"
+"	plugins are contained in `~/.vimperator/plugin'
+"	}}}1
+" Mappings
+noremap <S-Left>	:tabmove -1<CR>
+noremap <S-Right>	:tabmove +1<CR>
+noremap ,d		:bd<CR>
+noremap <C-k>		:<Nop>
+noremap ,,		:ls<CR>
+noremap <C-p>		:tabprevious<CR>
+noremap <C-n>		:tabnext<CR>
+noremap <Space>		:tabnext<CR>
+noremap <BS>		:tabprevious<CR>
+noremap ,m		:set guioptions+=m<CR>
+noremap ,M		:set guioptions-=m<CR>
+
+cnoremap <C-p>		<Up>
+cnoremap <C-n>		<Down>
+
+" Options
+set wildoptions=auto
+"source! ~/.vimperatorrc.local
+"set guioptions-=T
+"set guioptions-=m
+"set showtabline=0
+
+
+" END	{{{1
+" vim: set ft=vimperator foldmethod=marker:
