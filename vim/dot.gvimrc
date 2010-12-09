@@ -1,6 +1,10 @@
 "source $HOME/.vimrc
 
-"" Control IME on Windows {{{1
+"" [Miscellaneous settings (gvim specified)]
+set hlsearch
+
+"" [GUI components]
+" [Control IME on Windows]
 "if has("gui_running")
 "	if has("gui_win32")
 "		au InsertLeave *	set iminsert=0	 	"don't work
@@ -12,8 +16,7 @@ set imactivatekey=C-space
 "inoremap <ESC> <ESC>:set iminsert=0<CR>
 "set imsearch=0
 
-
-"" Toolbar etc..
+" [Toolbar etc..]
 set guioptions-=m
 set guioptions-=M
 set guioptions-=t
@@ -26,7 +29,7 @@ set guioptions+=c
 set guioptions-=e
 
 
-"" Colorscheme
+" [Colorscheme]
 ""  (the way to confirm current colorscheme is `:echo g:colors_name)
 "colorscheme neon		"soft color
 "colorscheme xoria256		"soft color
@@ -46,8 +49,8 @@ colorscheme candycode
 "colorscheme inkpot		" C/sh          unfit:perl/vim
 "colorscheme oceandeep		" perl/vim/sh   unfit:C
 
-
-"" See (:help setting-guifont)
+"" [Font setting]
+  "+ See (:help setting-guifont)
 if has("gui_running")
 	if has("gui_gtk2")
 	"" on GTK
@@ -55,6 +58,7 @@ if has("gui_running")
 		"set guifont=m\+2pvera\ 10
 	elseif has("gui_win32")
 	"" on windows
+		"{{{
 		"set guifont=M+2VM+IPAG_circle:h12:w7.5
 		""set guifont=M+2VM+IPAG\ circle:h14
 		"set gfn=Osaka°›≈˘…˝:h14
@@ -82,16 +86,23 @@ if has("gui_running")
 		"set guifont=§µ§∂§ §ﬂ•¥•∑•√•Ø:h11.5
 		"
 		"set guifont=Ç≥Ç¥Ç»Ç›ÉSÉVÉbÉN:h11.5
-		"set guifont=ÇlÇr\ ÉSÉVÉbÉN:h10
 		"set guifont=MS_Gothic:h12
-		set guifont=IPAÉSÉVÉbÉN:h12:cSHIFTJIS
+		"set guifont=IPAÉSÉVÉbÉN:h10:cSHIFTJIS
 		"set guifont=M+2VM+IPAG_circle:h12
+    "}}}
+		"set guifont=ÇlÇr\ ÉSÉVÉbÉN:h10
+		set guifont=M+2VM+IPAG_circle:h8:cSHIFTJIS
 	endif
 endif
 
 
-"" keymap (the prefix key is defined in .vimrc)
+"" [keymap]
+  "+ (the prefix key is defined in .vimrc)
 if has("gui_running")
 	nnoremap	[Tag]S	:source $MYGVIMRC<CR>
 	nnoremap	[Tag]V	:edit $MYGVIMRC<CR>
 endif
+
+" END {{{
+" vim: tw=0:et:sts=2:ts=2:sw=2
+" vim: fdm=marker
