@@ -745,7 +745,11 @@ set completeopt=menuone,menu,longest,preview
 "}}}
 "" tags for std c++ {{{
 "See http://www.vim.org/scripts/script.php?script_id=2358
-set tags+=$HOME/.vim/tags/cpp_src/cpp
+if has('unix')
+  set tags+=$HOME/.vim/tags/cpp_src/cpp
+elseif has('win32')
+  set tags+=$HOME/vimfiles/tags/cpp_src/cpp
+endif
 map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 "}}}
