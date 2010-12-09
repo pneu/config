@@ -198,7 +198,7 @@ set nocompatible
 "" Restore/Recovery/Backup or Session"{{{
 set viminfo='100,<50,s10,h
 "set viminfo='100,<50,s10,h,%,/50,c,f0,@50,:50,%
-set sessionoptions="blank,buffers,curdir,folds,help,options,tabpages,winsize"
+set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize
 
 "}}}
 "" Substitution in command-line mode "{{{
