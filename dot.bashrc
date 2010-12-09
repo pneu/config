@@ -46,4 +46,4 @@ export PS1
 
 export HISTSIZE=5000
 export HISTCONTROL=ignoreboth
-export HISTIGNORE="ls *":pwd
+export HISTIGNORE=pwd:history:ls:clear
