@@ -421,11 +421,11 @@ set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='do
 
 "}}}
 "" Highlight the current line {{{
-augroup HighlightCurrentLine
-  autocmd!
-  autocmd WinEnter *  setlocal cursorline
-  autocmd WinLeave *  setlocal nocursorline
-augroup END
+"augroup HighlightCurrentLine
+"  autocmd!
+"  autocmd WinEnter *  setlocal cursorline
+"  autocmd WinLeave *  setlocal nocursorline
+"augroup END
 
 "}}}
 "" Error format when compile C source {{{

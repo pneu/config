@@ -7,8 +7,10 @@
 "		au InsertLeave *	set imsearch=-1	 	"don't work
 "	endif
 "endif
-set iminsert=0
-set imsearch=0
+"set iminsert=0
+set imactivatekey=C-space
+"inoremap <ESC> <ESC>:set iminsert=0<CR>
+"set imsearch=0
 
 
 "" Toolbar etc..
