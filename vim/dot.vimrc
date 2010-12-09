@@ -351,7 +351,7 @@ syntax on
 "set list
   "+ show visibly tab, end of line, wrap line...
 
-set listchars=tab:>.,eol:$,trail:_,extends:\
+set listchars=tab:>.,eol:$,trail:_,precedes:<,extends:\
 "set listchars=tab:\ \ ,eol:$,trail:_,extends:\
   "+ 'set listchars' is setting for 'set list'
 
@@ -459,6 +459,10 @@ set scrolloff=2
 "nnoremap <silent>  # #zz<CR>
 "nnoremap <silent>  g*  g*zz<CR>
 "nnoremap <silent>  g#  g#zz<CR>
+set sidescroll=4
+set sidescrolloff=14
+"nnoremap <silent> <C-S-y> zh
+"nnoremap <silent> <C-S-e> zl
 
 "}}}
 "" Move between buffers or tabs or windows {{{
