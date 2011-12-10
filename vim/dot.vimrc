@@ -177,13 +177,14 @@ command! -nargs=1 HighlightTodo
 
 "}}}
 "" Vimgrep wordwise/visualize {{{
-function! s:VimgrepWFunc(dir, word)
+function! s:VimgrepWFunc(mode, dir, word)
   let dir = a:dir
-  if a:word == '___!!!___vmode___'    " TODO: how to get current mode
+  if a:mode == 'v'    " only characterwise-visual
     let word = getline(".")[col("'<")-1:col("'>")-1]
-    " TODO: not expected word included CR
-  else
+  elseif a:mode == 'n'
     let word = a:word
+  else
+    echoerr 'not accept in current mode
   endif
   try
     execute 'vimgrep /\<' . word . '\>/j '. dir
@@ -200,10 +201,9 @@ endfunction
 command! -nargs=* -buffer -complete=dir VimgrepW
   \ call <SID>VimgrepWFunc(<f-args>)
 
-" let g:VimgrepWDefaultDir='./**/*';
 let g:VimgrepWDefaultDir='./**/*'
-nnoremap <silent> gs      :call <SID>VimgrepWFunc(g:VimgrepWDefaultDir, expand('<cword>'))<CR>
-vnoremap <silent> gs      :call <SID>VimgrepWFunc(g:VimgrepWDefaultDir, '___!!!___vmode___')<CR>
+nnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
+vnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
 "}}}
 
 
