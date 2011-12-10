@@ -1,4 +1,4 @@
-#	local version: 2.2a
+#	local version: 2.2d
 #	You are recommended to take a symbol, 
 #	"-DUSE104on109mix" on jp106 keyboard.
 
@@ -30,7 +30,6 @@ if ( USE104on109mix )
 endif
 
 #}}}
-
 #  key sequence definition	{{{
 #
  keyseq $openlinereturn	= Return Left
@@ -112,7 +111,6 @@ endif
 #}}}
 
 #}}}
-
 #  key to move, resize, hide, appear Window, Cursor	{{{
 
 #  Console Window		{{{
@@ -122,50 +120,66 @@ endif
  key S-A-E		= &WindowClingToRight	#ウィンドウを右に寄せる
  key S-A-P		= &WindowClingToTop	#ウィンドウを上に寄せる
  key S-A-N		= &WindowClingToBottom	#ウィンドウを下に寄せる
+ key S-A-F		= &WindowClingToTop	#ウィンドウを上に寄せる
+ key S-A-C		= &WindowClingToBottom	#ウィンドウを下に寄せる
  key S-A-Left		= &WindowMove(-16, 0)	#ウィンドウの移動
  key S-A-Right		= &WindowMove(16, 0)	#	〃
  key S-A-Up		= &WindowMove(0, -16)	#	〃
  key S-A-Down		= &WindowMove(0, 16)	#	〃
- key C-A-S-L		= &WindowLower		#ウィンドウを一番下へ
- key C-A-S-R		= &WindowRaise		#ウィンドウを一番上へ
- key C-A-S-H		= &WindowHMaximize	# ウィンドウを横方向に最大化
- key C-A-S-V		= &WindowVMaximize	# ウィンドウを縦方向に最大化
+ key ~M0-C-A-S-L	= &WindowLower		#ウィンドウを一番下へ
+ key ~M0-C-A-S-R	= &WindowRaise		#ウィンドウを一番上へ
+ key ~M0-C-A-S-H	= &WindowHMaximize	# ウィンドウを横方向に最大化
+ key ~M0-C-A-S-V	= &WindowVMaximize	# ウィンドウを縦方向に最大化
+
+ key M0-~C-S-A-H	= &WindowMove(-16, 0)	#ウィンドウの移動
+ key M0-~C-S-A-L	= &WindowMove(16, 0)	#	〃
+ key M0-~C-S-A-K	= &WindowMove(0, -16)	#	〃
+ key M0-~C-S-A-J	= &WindowMove(0, 16)	#	〃
+
+#key M0-W-Enter		= &WindowMonitor(0, true, false)
+ key M0-C-T		= &Sync &WindowToggleTopMost &WindowSetAlpha(67)
 
 #}}}
 #  Console Cursor		{{{
 #	* vim-like keybindings
 
- key M0-J		= Down
- key M0-K		= Up
- key M0-H		= Left
- key M0-L		= Right
- key M0-S-J		= S-Down
- key M0-S-K		= S-Up
- key M0-S-H		= S-Left
- key M0-S-L		= S-Right
+ key M0-*J		= *Down
+ key M0-*K		= *Up
+ key M0-*H		= *Left
+ key M0-*L		= *Right
 #key M0-Space		= 
 #key M0-Tab		= $WindowSelectOpen
 
 #}}}
+#  resize window			{{{
+
+ key A-F10		= &Sync &WindowMaximize
+ key A-F5		= &Sync &WindowMinimize
+
+#}}}
 #  Mouse Emulate		{{{
 
- key M0-A-J		= &MouseMove(0, 16)
- key M0-A-K		= &MouseMove(0, -16)
- key M0-A-H		= &MouseMove(-16, 0)
- key M0-A-L		= &MouseMove(16, 0)
- key M0-M		= &MouseWheel(-16)
- key M0-Comma		= &MouseWheel(16)
+#key M0-C-A-J		= &MouseMove(0, 16)
+#key M0-C-A-K		= &MouseMove(0, -16)
+#key M0-C-A-H		= &MouseMove(-16, 0)
+#key M0-C-A-L		= &MouseMove(16, 0)
+#key M0-C-M		= &MouseWheel(-16)
+#key M0-C-Comma		= &MouseWheel(16)
 
- key M0-S-A-J		= &MouseMove(0, 160)
- key M0-S-A-K		= &MouseMove(0, -160)
- key M0-S-A-H		= &MouseMove(-160, 0)
- key M0-S-A-L		= &MouseMove(160, 0)
+#key M0-S-A-J		= &MouseMove(0, 160)
+#key M0-S-A-K		= &MouseMove(0, -160)
+#key M0-S-A-H		= &MouseMove(-160, 0)
+#key M0-S-A-L		= &MouseMove(160, 0)
+
+#}}}
+#  Mouse Emulate		{{{
+ key C-OpenBracket	= Esc
 
 #}}}
 
 #}}}
 
-keymap jp106map : myGlobal
+keymap custommap : myGlobal
 #  ~と`に関するマップ [for usKB(FKB-86E like) on jp106(109)KB]	{{{
 #
  def key BackSpace2		= 0x7d
@@ -175,8 +189,14 @@ keymap jp106map : myGlobal
  key M-BackSpace2		= M-BackSpace
 
 #}}}
+#  operation on explorer {{{
+#
+ key W-E	= &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,::{20D04FE0-3AEA-1069-A2D8-08002B30309D}", , ShowNormal)
+ key M0-r	= F2
 
-keymap emacslike : jp106map
+#}}}
+
+keymap emacslike : custommap
 #  emacs-like keymap					{{{
 
  key C-F		= Right
@@ -228,21 +248,12 @@ keymap emacslike : jp106map
 #key C-Y			= C-V
 
 #}}}
-
 #  shell execute(xkeymacs-ish)	{{{
 
 #key S-A-_1	= &ShellExecute("open", "C://WINDOWS/system32/cmd.exe", , $WindowClass, ShowNormal)
 #key S-A-_2	= &ShellExecute("open", "F://Prog_g2/xyzzy/xyzzy.exe", , , ShowNormal)
 
 #}}}
-
-#  resize window			{{{
-
- key A-F10		= &Sync &WindowMaximize
- key A-F5		= &Sync &WindowMinimize
-
-#}}}
-
 #  for mouse settings		{{{
 #	MX-Revolution patched updated-121
 #	http://d.hatena.ne.jp/solipt/20060925/1159118407
@@ -305,46 +316,46 @@ window window-select /:window-select:SysListView32$/ : emacslike
 window allapp /.*/ : emacslike
 
 ### * Poderosa
-window poderosa /Poderosa\.exe/ : jp106map
+window poderosa /Poderosa\.exe/ : custommap
 
 ### * xyzzy
-window xyzzy /xyzzy\.exe/ : jp106map
+window xyzzy /xyzzy\.exe/ : custommap
 
 ### * meadow
-window meadow /Meadow\.exe/ : jp106map
+window meadow /Meadow\.exe/ : custommap
 
 ### * firefox
-window firefox /firefox\.exe/ : jp106map
+window firefox /firefox\.exe/ : custommap
 #key C-G		= C-K			# focus search bar
 
 ### * gvim
-window gvim /gvim\.exe/ : jp106map
+window gvim /gvim\.exe/ : custommap
 
 ### * Tales Weaver (to take SS with C-S)
-window talesweaver /InphaseNXD\.exe/ : jp106map
+window talesweaver /InphaseNXD\.exe/ : custommap
 
 ### * vmware
 window vmware /vmplayer\.exe/ : myGlobal
 
 ### * PuTTY
-window putty /PUTTY\.EXE/ : jp106map
+window putty /PUTTY\.EXE/ : custommap
 
 ### * PuTTY.jp
-window puttyjp /puttyjp\.exe/ : jp106map
+window puttyjp /puttyjp\.exe/ : custommap
 
 ### * MINGW32(MSYS)
-window mingw /rxvt\.exe/ : jp106map
+window mingw /rxvt\.exe/ : custommap
 
 ### * RealVNC
 window realvnc /vncviewer\.exe/ : myGlobal
 
 # ### * opera
-# window opera /opera\.exe:OpWindow/ : jp106map
+# window opera /opera\.exe:OpWindow/ : custommap
 
 ### * sylera
 #window sylera /sylera\.exe/ : emacslike
 
-#window opera /opera\.exe/ : jp106map
+#window opera /opera\.exe/ : custommap
 
 #}}}
 
