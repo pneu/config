@@ -25,7 +25,7 @@
 if has('unix')
   source /etc/vimrc
 elseif has('win32')
-  runtime custom/mainpc.vim
+  runtime custom/vimrc
 endif
 
 filetype plugin on
@@ -172,9 +172,38 @@ command! -bang -bar -complete=file -nargs=? Sjis  Cp932<bang> <args>
   "+ (See help :syn-keyword, :syn-list, group-name)
 " Argument string is highlighted
 " if Todo is set as group-name already (e.g. in current colorscheme etc.)
-command! -nargs=1 -buffer HighlightTodo
+command! -nargs=1 HighlightTodo
 	\ syntax keyword Todo <args>
 
+"}}}
+"" Vimgrep wordwise/visualize {{{
+function! s:VimgrepWFunc(dir, word)
+  let dir = a:dir
+  if a:word == '___!!!___vmode___'    " TODO: how to get current mode
+    let word = getline(".")[col("'<")-1:col("'>")-1]
+    " TODO: not expected word included CR
+  else
+    let word = a:word
+  endif
+  try
+    execute 'vimgrep /\<' . word . '\>/j '. dir
+    let @/=word
+    let @+=word
+  catch /^Vim(vimgrep):\(.*\)/
+    echoerr v:exception
+    "+ TODO: incomplete
+  finally
+    unlet word
+  endtry
+endfunction
+
+command! -nargs=* -buffer -complete=dir VimgrepW
+  \ call <SID>VimgrepWFunc(<f-args>)
+
+" let g:VimgrepWDefaultDir='./**/*';
+let g:VimgrepWDefaultDir='./**/*'
+nnoremap <silent> gs      :call <SID>VimgrepWFunc(g:VimgrepWDefaultDir, expand('<cword>'))<CR>
+vnoremap <silent> gs      :call <SID>VimgrepWFunc(g:VimgrepWDefaultDir, '___!!!___vmode___')<CR>
 "}}}
 
 
@@ -222,6 +251,7 @@ set autoread
 "" Window behavior"{{{
 set splitbelow
 set splitright
+set noequalalways
 
 "}}}
 "" Behavior when the cursor on First/Last character"{{{
@@ -256,6 +286,10 @@ set nottimeout
 set timeoutlen=650
   "+ timeout length when map sequence pressed
 set ttimeoutlen=-1
+
+"}}}
+"" use unix slash for path separation"{{{
+set shellslash
 
 "}}}
 
@@ -444,6 +478,19 @@ endif
   "+ (See http://vim-users.jp/2009/08/hack-59/)
 nnoremap  [Tag] <Nop>
 nmap    ,   [Tag]
+vnoremap  [Tag] <Nop>
+vmap    ,   [Tag]
+
+"}}}
+"" Insert date {{{
+inoremap <silent> <special> <C-;>   <C-r>=strftime('%Y%m%d')<CR>
+nnoremap <silent> <special> <C-;>   :<C-u>put! =strftime('%Y%m%d')<CR>
+"inoremap <silent> <special> <C-F5>   <C-r>=strftime('%Y%m%d')<CR>
+"nnoremap <silent> <special> <C-F5>   :<C-u>put! =strftime('%Y%m%d')<CR>
+"inoremap <silent> <special> <C-F5> 
+"  \ <BS><C-r>=strftime('%Y-%m-%dT%H%M%S')<CR>
+"nnoremap <silent> <special> [Tag]<C-F5> 
+"  \ :<C-u>put! =strftime('%Y-%m-%dT%H%M%S')<CR>
 
 "}}}
 "" Toggle option number {{{
@@ -452,7 +499,7 @@ nnoremap <silent> [Tag]n  :<C-u>call <SID>Toggle_option('number')<CR>
 "}}}
 "" Recenter as searching word {{{
 "set scrolloff=999    "recenter (almost same as zz)
-set scrolloff=2
+set scrolloff=0
 "nnoremap <silent>  n nzz<CR>
 "nnoremap <silent>  N Nzz<CR>
 "nnoremap <silent>  * *zz<CR>
@@ -491,10 +538,15 @@ cnoremap      <C-b>   <Left>
 
 "}}}
 "" Resize windows easily {{{
-nnoremap <silent> <Up>    <C-w>+
+nnoremap <silent> <Up>      <C-w>+
 nnoremap <silent> <Down>    <C-w>-
 nnoremap <silent> <Left>    <C-w><
 nnoremap <silent> <Right>   <C-w>>
+
+nnoremap <silent> <C-Up>    :set lines+=1<CR>
+nnoremap <silent> <C-Down>  :set lines-=1<CR>
+nnoremap <silent> <C-Left>  :set columns-=1<CR>
+nnoremap <silent> <C-Right> :set columns+=1<CR>
 
 "}}}
 "" Switch :hls, :noh when leaving Lang-Arg mode(See :lmap @Lang-Arg) {{{
@@ -534,8 +586,13 @@ if has('unix')
 endif
 
 "}}}
+"" Switch error nr {{{
+nnoremap [Tag]j :cnext<CR>
+nnoremap [Tag]k :cprevious<CR>
+
+"}}}
 "" Preview Variable {{{
-  nnoremap <silent> [p        :ptag <C-r><C-w><cr>
+"nnoremap <silent> [p        :ptag <C-r><C-w><cr>
 
 "}}}
 "" Open/Close folds (1 level nested) {{{
@@ -555,16 +612,17 @@ command! -bang -bar -nargs=0 CDL lcd<bang> %:h
 
 "}}}
 "" Copy/Paste to Clipboard {{{
-nnoremap <silent> [Tag]y  "+y
+nnoremap <silent> [Tag]yy "+yy
+nnoremap <silent> [Tag]ye "+ye
+vnoremap <silent> [Tag]y  "+y
 nnoremap <silent> [Tag]p  "+p
 nnoremap <silent> [Tag]P  "+P
 
 "}}}
 "" For ChangeLog {{{
 nnoremap <silent> <special> <F5>  <Esc>O<Esc>"=strftime('%Y-%m-%dT%H:%M:%S')
-                \ <CR>p$a:<Esc>o<Esc>:.!basename `pwd`
+                \ <CR>p$a:<Esc>:put =fnamemodify(getcwd(), ':t')
                 \ <CR>kJo<TAB>* 
-  "+ TODO: don't use !basename, but getcwd() to get directory name 
 
 "}}}
 "" For update/reload vimrc {{{
@@ -587,6 +645,12 @@ nnoremap <silent> <C-h> :<C-u>help<Space><C-r><C-w><CR>
 nnoremap  gc    `[v`]
 vnoremap  gc    :<C-u>normal gc<CR>
 onoremap  gc    :<C-u>normal gc<CR>
+
+"}}}
+"" Highlight cword (without jump) {{{
+nnoremap <silent> [Tag]*  :<C-U>let @/='\<'.expand('<cword>').'\>'<CR>
+  "decide comment string as value of filetype
+vnoremap <silent> [Tag]*  :<C-U>let @/=getline(".")[col("'<")-1:col("'>")-1]<CR>
 
 "}}}
 "" Duplicate lines added comment {{{
@@ -661,8 +725,8 @@ let g:manpageview_options="-S 3p"
 "}}}
 "" buftabs.vim {{{
 set laststatus=2        "always show status line
-"let g:buftabs_only_basename=1  "show only basename (not './path/basename')
-"let g:buftabs_in_statusline=1  "show buffer-tab in status line
+let g:buftabs_only_basename=1  "show only basename (not './path/basename')
+"let g:buftabs_in_statusline=0  "show buffer-tab in status line
 
 "}}}
 "" mru.vim {{{
@@ -754,6 +818,8 @@ map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 "}}}
 
+" read after script
+runtime custom/after/vimrc
 
 "" [memo]
 "au FileType * set formatoptions-=r "don't continue comment line automatically
