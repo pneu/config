@@ -817,6 +817,11 @@ endif
 map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 "}}}
+"" vim-pathogen {{{
+"See http://www.vim.org/scripts/script.php?script_id=2332
+call pathogen#infect()
+
+"}}}
 
 " read after script
 runtime custom/after/vimrc
