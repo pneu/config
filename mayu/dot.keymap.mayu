@@ -63,7 +63,7 @@ keymap myGlobal
  key *RightAlt		= *LeftWindows
 
  mod shift		+= !!Space
- key R-*Space		= &Ignore
+ key S-*Space		= Space
 
 # Happy Hacking Keyboard Lite 2 Setting: RightAlt when SW1 is on.
 if ( HHKBpro )
