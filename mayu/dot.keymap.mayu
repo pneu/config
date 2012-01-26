@@ -77,8 +77,8 @@ endif
  mod alt 		+= –³•ÏŠ·
  key *–³•ÏŠ·		= *LeftAlt
 
-#mod mod0		+= !!•ÏŠ·	# change vi mode temporarily
- mod mod0		+= !•ÏŠ·	# assign •ÏŠ· with mod0 entirely
+ mod mod0		+= !!•ÏŠ·
+ key M0-*IL-*IC-•ÏŠ· 	= $ToggleIME
 
  mod alt		+= ‚Ð‚ç‚ª‚È
  key *‚Ð‚ç‚ª‚È		= *RightAlt
