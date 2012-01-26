@@ -738,9 +738,9 @@ endif
 
 "}}}
 "" vim-Arpeggio {{{
-call arpeggio#load()
-let g:arpeggio_timeoutlen=40    "default
-Arpeggio noremap! jk  <Esc>
+"call arpeggio#load()
+"let g:arpeggio_timeoutlen=40    "default
+"Arpeggio noremap! jk  <Esc>
 
 "function! s:Toggle_option_number() "not use 's:'
 "Arpeggio nnoremap  sn  :call <SID>Toggle_option('number')<CR>
