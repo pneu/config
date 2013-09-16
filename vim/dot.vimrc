@@ -34,6 +34,10 @@ filetype plugin on
   "  Note: my autocmd, indent setttings etc. had better describe
   "        below this line.
 
+" TODO: implimentation plan
+"  keymap g/ : start to search pattern without unfold.
+"              attempt to match only the header for folded text.
+"              useful to make a summary.
 
 "" [ScriptLocal Function]
 "" boolean s:is_win(void) "{{{
@@ -80,6 +84,85 @@ function! s:Toggle_open_quickfix(count)
 endfunction
 
 "}}}
+"" void s:_F_WriteSession() "{{{
+"  * Usage
+"     :call _F_WriteSession()
+"  * Result
+"   do :mksession and :wviminfo Session.viminfo
+"   Create session files in directory "vimSession".
+"   Create the directory if not exists.
+function! s:_F_WriteSession()
+  if exists("*mkdir")
+    let dirname = "vimSession"
+    if !isdirectory(dirname)
+      call mkdir(dirname)
+    endif
+    execute "mksession! " . dirname . "/Session.vim"
+    execute "wviminfo! " . dirname . "/Session.viminfo"
+    "execute "wundo! " . dirname . "/Session.undolist"
+    unlet dirname
+  endif
+endfunction
+
+"}}}
+"" void s:_F_ReadSession() "{{{
+"  * Usage
+"     :call _F_ReadSession()
+"  * Result
+"   Read session files created by WriteSession
+"   Abort if it's not exists.
+function! s:_F_ReadSession()
+  let dirname = getcwd() . "/vimSession"
+  if isdirectory(dirname)
+    let sessionfile = dirname . "/Session.vim"
+    let viminfofile = dirname . "/Session.viminfo"
+    "let undolistfile = "vimSession" . "/Session.undolist"
+    "if (filereadable(sessionfile) && filereadable(viminfofile) && filereadable(undolistfile))
+    if (filereadable(sessionfile) && filereadable(viminfofile))
+      source `=sessionfile`
+      rviminfo `=viminfofile`
+      "rundo `=undolistfile`
+    endif
+    unlet sessionfile
+    unlet viminfofile
+    "unlet undolistfile
+  endif
+  unlet dirname
+endfunction
+
+"}}}
+"" void s:_F_GetErrorFile(errorfile) "{{{
+function! s:_F_GetErrorFile(errorfile)
+  let save_errorformat = &errorformat
+  setlocal errorformat=%f\|%l\ col\ %c\|%m
+  execute 'cgetfile ' . a:errorfile
+  let &errorformat = save_errorformat
+  unlet save_errorformat
+endfunction
+
+"}}}
+"" void s:_F_SetRelativeNumber() "{{{
+function! s:_F_SetRelativeNumber()
+  if &number == 0
+    setlocal relativenumber
+  endif
+endfunction
+
+"}}}
+"" void s:_F_ToggleAbsRelNumber() "{{{
+function! s:_F_ToggleAbsRelNumber(setmode)
+  if &number == 0 && &relativenumber == 0
+  else
+    "setlocal numberwidth=5
+    if a:setmode == "nu"
+      setlocal number
+    elseif a:setmode == "rnu"
+      setlocal relativenumber
+    endif
+  endif
+endfunction
+
+"}}}
 "" [Public Function]
 
 "" [Character Encoding]
@@ -91,62 +174,77 @@ endfunction
 " set fileencodings=utf-8,cp932,shift-jis,sjis,euc-jp
 "endif
 
-"(See KaWaZ[http://www.kawaz.jp/pukiwiki/?vim#cb691f26])
-if &encoding !=# 'utf-8'
-  set encoding=japan
-  set fileencoding=japan
+"(See http://magicant.txt-nifty.com/main/2009/03/vim-modeline-fi.html)
+if !has('iconv')
+  set fileencodings=ucs-bom,utf-8,iso-2022-jp,sjis,cp932,euc-jp,cp20932
 endif
-if has('iconv')
-  let s:enc_euc = 'euc-jp'
-  let s:enc_jis = 'iso-2022-jp'
-  " iconvÇ™eucJP-msÇ…ëŒâûÇµÇƒÇ¢ÇÈÇ©ÇÉ`ÉFÉbÉN
-  if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
-    let s:enc_euc = 'eucjp-ms'
-    let s:enc_jis = 'iso-2022-jp-3'
-  " iconvÇ™JISX0213Ç…ëŒâûÇµÇƒÇ¢ÇÈÇ©ÇÉ`ÉFÉbÉN
-  elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-    let s:enc_euc = 'euc-jisx0213'
-    let s:enc_jis = 'iso-2022-jp-3'
-  endif
-  " fileencodingsÇç\íz
-  if &encoding ==# 'utf-8'
-    let s:fileencodings_default = &fileencodings
-    let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
-    let &fileencodings = &fileencodings .','. s:fileencodings_default
-    unlet s:fileencodings_default
-  else
-    let &fileencodings = &fileencodings .','. s:enc_jis
-    set fileencodings+=utf-8,ucs-2le,ucs-2
-    if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
-      set fileencodings+=cp932
-      set fileencodings-=euc-jp
-      set fileencodings-=euc-jisx0213
-      set fileencodings-=eucjp-ms
-      let &encoding = s:enc_euc
-      let &fileencoding = s:enc_euc
-    else
-      let &fileencodings = &fileencodings .','. s:enc_euc
-    endif
-  endif
-  " íËêîÇèàï™
-  unlet s:enc_euc
-  unlet s:enc_jis
-endif
-" ì˙ñ{åÍÇä‹Ç‹Ç»Ç¢èÍçáÇÕ fileencoding Ç… encoding ÇégÇ§ÇÊÇ§Ç…Ç∑ÇÈ
-if has('autocmd')
-  function! AU_ReCheck_FENC()
-    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
-      let &fileencoding=&encoding
-    endif
-  endfunction
-  autocmd BufReadPost * call AU_ReCheck_FENC()
-endif
-" â¸çsÉRÅ[ÉhÇÃé©ìÆîFéØ
-set fileformats=unix,dos,mac
-" Å†Ç∆Ç©ÅõÇÃï∂éöÇ™Ç†Ç¡ÇƒÇ‡ÉJÅ[É\Éãà íuÇ™Ç∏ÇÍÇ»Ç¢ÇÊÇ§Ç…Ç∑ÇÈ
+
+"(See KaWaZ[http://www.kawaz.jp/pukiwiki/?vim#cb691f26])"{{{
+"if &encoding !=# 'utf-8'
+"  set encoding=japan
+"  set fileencoding=japan
+"endif
+"if has('iconv')
+"  let s:enc_euc = 'euc-jp'
+"  let s:enc_jis = 'iso-2022-jp'
+"  " iconv„ÅåeucJP-ms„Å´ÂØæÂøú„Åó„Å¶„ÅÑ„Çã„Åã„Çí„ÉÅ„Çß„ÉÉ„ÇØ
+"  if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
+"    let s:enc_euc = 'eucjp-ms'
+"    let s:enc_jis = 'iso-2022-jp-3'
+"  " iconv„ÅåJISX0213„Å´ÂØæÂøú„Åó„Å¶„ÅÑ„Çã„Åã„Çí„ÉÅ„Çß„ÉÉ„ÇØ
+"  elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
+"    let s:enc_euc = 'euc-jisx0213'
+"    let s:enc_jis = 'iso-2022-jp-3'
+"  endif
+"  " fileencodings„ÇíÊßãÁØâ
+"  if &encoding ==# 'utf-8'
+"    let s:fileencodings_default = &fileencodings
+"    let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
+"    let &fileencodings = &fileencodings .','. s:fileencodings_default
+"    unlet s:fileencodings_default
+"  else
+"    let &fileencodings = &fileencodings .','. s:enc_jis
+"    set fileencodings+=utf-8,ucs-2le,ucs-2
+"    if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
+"      set fileencodings+=cp932
+"      set fileencodings-=euc-jp
+"      set fileencodings-=euc-jisx0213
+"      set fileencodings-=eucjp-ms
+"      let &encoding = s:enc_euc
+"      let &fileencoding = s:enc_euc
+"    else
+"      let &fileencodings = &fileencodings .','. s:enc_euc
+"    endif
+"  endif
+"  " ÂÆöÊï∞„ÇíÂá¶ÂàÜ
+"  unlet s:enc_euc
+"  unlet s:enc_jis
+"endif
+"" Êó•Êú¨Ë™û„ÇíÂê´„Åæ„Å™„ÅÑÂ†¥Âêà„ÅØ fileencoding „Å´ encoding „Çí‰Ωø„ÅÜ„Çà„ÅÜ„Å´„Åô„Çã
+"if has('autocmd')
+"  function! AU_ReCheck_FENC()
+"    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+"      let &fileencoding=&encoding
+"    endif
+"  endfunction
+"  autocmd BufReadPost * call AU_ReCheck_FENC()
+"endif"}}}
+" ÊîπË°å„Ç≥„Éº„Éâ„ÅÆËá™ÂãïË™çË≠ò
+"set fileformats=dos,unix,mac
+" ‚ñ°„Å®„Åã‚óã„ÅÆÊñáÂ≠ó„Åå„ÅÇ„Å£„Å¶„ÇÇ„Ç´„Éº„ÇΩ„É´‰ΩçÁΩÆ„Åå„Åö„Çå„Å™„ÅÑ„Çà„ÅÜ„Å´„Åô„Çã
 if exists('&ambiwidth')
   set ambiwidth=double
 endif
+
+"set default encoding if on windows
+if has('win32')
+  augroup DefaultFileencodingFileFormat
+    autocmd!
+    autocmd BufNewFile * set fileencoding=cp932
+    autocmd BufNewFile * set fileformat=dos
+  augroup END
+endif
+
 
 "}}}
 
@@ -162,6 +260,8 @@ command! -bang -bar -complete=file -nargs=? Iso2022jp
 \ edit<bang> ++enc=iso-2022-jp <args>
 command! -bang -bar -complete=file -nargs=? Utf8
 \ edit<bang> ++enc=utf-8 <args>
+command! -bang -bar -complete=file -nargs=? Utf8dos
+\ edit<bang> ++enc=utf-8 ++ff=dos <args>
  
 command! -bang -bar -complete=file -nargs=? Jis  Iso2022jp<bang> <args>
 command! -bang -bar -complete=file -nargs=? Sjis  Cp932<bang> <args>
@@ -173,7 +273,7 @@ command! -bang -bar -complete=file -nargs=? Sjis  Cp932<bang> <args>
 " Argument string is highlighted
 " if Todo is set as group-name already (e.g. in current colorscheme etc.)
 command! -nargs=1 HighlightTodo
-	\ syntax keyword Todo <args>
+  \ syntax keyword Todo <args>
 
 "}}}
 "" Vimgrep wordwise/visualize {{{
@@ -205,9 +305,38 @@ let g:VimgrepWDefaultDir='./**/*'
 nnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
 vnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
 "}}}
+"" Write/Read Session {{{
+command! WriteSession call <SID>_F_WriteSession()
+command! ReadSession call <SID>_F_ReadSession()
+"}}}
+"" Write/Read Session {{{
+command! -complete=file -nargs=1 Cgetfile call <SID>_F_GetErrorFile(<q-args>)
+"}}}
+"" Vimgrep visual-search {{{
+" See :help visual-search
+"function! s:VisualSearch(mode, dir, word)
+"  let cpoptions_save = &cpoptions
+"  let &cpoptions -=B<
+"  vmap g/ y/<C-R>"<CR>
+"  let &cpoptions = cpoptions
+"endfunction
+
+command! -nargs=* -buffer -complete=dir VimgrepW
+  \ call <SID>VimgrepWFunc(<f-args>)
+
+let g:VimgrepWDefaultDir='./**/*'
+nnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
+vnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
+"}}}
 
 
 "" [Miscellaneous settings]
+"" Compatibility {{{
+"set cpoptions-=B
+"set cpoptions-=<
+  "+ TODO: don't work
+
+"}}}
 "" Language/Locale/Ctype etc. {{{
 language mes C
 
@@ -238,7 +367,7 @@ set gdefault
 "" Completion"{{{
 set wildmenu
 set wildchar=<TAB>
-set wildmode=full
+set wildmode=longest:full
 
 "}}}
 "" Buffer status"{{{
@@ -263,7 +392,7 @@ set whichwrap=b,s,<,>,[,]
 
 "}}}
 "" Indentation"{{{
-set softtabstop=0
+set softtabstop=2
 "set textwidth=78
 set textwidth=0
   "+ don't wrap
@@ -286,10 +415,36 @@ set nottimeout
 set timeoutlen=650
   "+ timeout length when map sequence pressed
 set ttimeoutlen=-1
+  "+ depends on timeoutlen
 
 "}}}
 "" use unix slash for path separation"{{{
 set shellslash
+
+"}}}
+"" supress bell"{{{
+set visualbell
+set t_vb=
+
+"}}}
+"" cscope settings"{{{
+" See http://jhoshina.hatenablog.com/entry/2012/01/17/003929
+if has("cscope")
+  "set csprg in custom directory
+  set csto=1
+  set nocst
+  set nocsverb
+  "if filereadable("cscope.out") " add any database in current directory
+  "  cs add cscope.out
+  "   "+ the follow line cause failure of :cscope d
+  "endif
+  "set csverb
+  "set cscopequickfix=s-,c-,d-,i-,t-,e-
+endif
+
+"}}}
+"" vimdiff settings"{{{
+set diffopt+=vertical
 
 "}}}
 
@@ -394,19 +549,19 @@ scriptencoding euc-jp
   "+ (from this line to described ':scriptencoding')
 
 "highlight JpSpace cterm=underline ctermfg=Blue guifg=Blue
-"au BufRead,BufNew * match JpSpace /°°/
-  "+ Following two settings bring ¡¥≥—§Œ∂ı«Ú into sight
+"au BufRead,BufNew * match JpSpace /ÔΩ°ÔΩ°/
+  "+ Following two settings bring ÔæÅÔΩ¥ÔΩ≥ÔæëÔΩ§ÔæéÔΩ∂Óê≤„Éªinto sight
   "+ (See http://d.hatena.ne.jp/studio-m/20080117/1200552387)
 scriptencoding
 
 "}}}
 "" Indent options {{{
 filetype indent off
-set shiftwidth=8
+set shiftwidth=2
 set noexpandtab
 set noshiftround
 "set tabstop=8
-set tabstop=8
+set tabstop=2
 set softtabstop=0
 set noautoindent
 set nocindent
@@ -448,7 +603,8 @@ set showmode
   "+ display mode INSERT/REPLACE/...
 "set statusline='['%n']'%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
 "set statusline=%<[%n]\ %f\ %h%r%m[%{&fenc}][%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=[0x%B]\ %c,%l/%L\ %y
-set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=[0x%B]\ %c,%l/%L\ %y
+"set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=[0x%B]\ %c,%l/%L\ %y
+set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%cC,%l/%L\ [%{&ts}T,%{&sts}t,%{&sw}S]\ %y
   "+ Comment out 'cause using buftab.
   "+ show character code and return character in status line
 
@@ -470,6 +626,35 @@ if has('unix')
 elseif has('win32')
   set makeprg=make
 endif
+
+"}}}
+"" Highlight the remarkable {{{
+augroup RemarkableMarker_Exclaim
+ autocmd!
+ autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+   \ syntax match Error /^\W\+!\ /he=e-1
+augroup END
+"highlight PlusRemark ctermbg=Blue guibg=Blue
+augroup RemarkableMarker_Plus
+ autocmd!
+ autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+   \ syntax match DiffAdd /^\W\++\ /he=e-1
+"   \ syntax match PlusRemark /^\W\++\ /he=e-1
+augroup END
+"augroup LowPriorityMarker
+" autocmd!
+" autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+"   \ syntax match Error /^\W\++\ .*$/
+"augroup END
+
+"}}}
+"" show relativenumber {{{
+augroup ShowNumberAuto
+ autocmd!
+ "autocmd BufEnter * call <SID>_F_SetRelativeNumber()
+ autocmd InsertLeave * call <SID>_F_ToggleAbsRelNumber("rnu")
+ autocmd InsertEnter * call <SID>_F_ToggleAbsRelNumber("nu")
+augroup END
 
 "}}}
 
@@ -495,6 +680,23 @@ nnoremap <silent> <special> <C-;>   :<C-u>put! =strftime('%Y%m%d')<CR>
 "}}}
 "" Toggle option number {{{
 nnoremap <silent> [Tag]n  :<C-u>call <SID>Toggle_option('number')<CR>
+
+"}}}
+""  {{{
+nnoremap <silent> gl
+  \ :<C-u>execute 'normal ' .'0' .(v:count-1<0 ? 0 : v:count-1) .'l'<CR>
+"set scrolloff=999    "recenter (almost same as zz)
+set scrolloff=0
+"nnoremap <silent>  n nzz<CR>
+"nnoremap <silent>  N Nzz<CR>
+"nnoremap <silent>  * *zz<CR>
+"nnoremap <silent>  # #zz<CR>
+"nnoremap <silent>  g*  g*zz<CR>
+"nnoremap <silent>  g#  g#zz<CR>
+set sidescroll=4
+set sidescrolloff=14
+"nnoremap <silent> <C-S-y> zh
+"nnoremap <silent> <C-S-e> zl
 
 "}}}
 "" Recenter as searching word {{{
@@ -631,7 +833,7 @@ nnoremap  [Tag]v  :edit $MYVIMRC<CR>
 
 "}}}
 "" :help under the cursor (See WEB+DB PRESS vol.52, p68) {{{
-nnoremap <silent> <C-h> :<C-u>help<Space><C-r><C-w><CR>
+"nnoremap <silent> <C-h> :<C-u>help<Space><C-r><C-w><CR>
 
 " do not work following mapping
 "nnoremap <silent>  <C-h> 
@@ -681,6 +883,10 @@ augroup InsertTemplete
 augroup END
 
 "}}}
+"" search visual block {{{
+vmap g/ y/<C-R>"<CR>
+
+"}}}
 
 "" [plugin settings] (built-in, external command or my defined)
 "" changelog {{{
@@ -701,6 +907,7 @@ if has('unix')
 else
   "nnoremap <silent>   [Tag]t    :!ctags *<cr>
   nnoremap <silent>   [Tag]t    :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q *<cr>
+  nnoremap <silent>   [Tag]T    :!ctags -R --exclude=.h --c++-kinds=+p --fields=+iaS --extra=+q --verbose *<cr>
   "+ Note: Do after :CDl.
 endif
 
@@ -760,18 +967,18 @@ nnoremap      [FUFTag]  <Nop>
 nmap        <C-q>   [FUFTag]
 "let g:FuzzyFinderOptions.Base.key_open=<CR>      "default
 "let g:FuzzyFinderOptions.Base.key_open_split=<C-j>
-nnoremap <silent> [FUFTag]<C-n>   :FuzzyFinderBuffer<CR>
-nnoremap <silent> [FUFTag]<C-m>   :FuzzyFinderFile 
+nnoremap <silent> [FUFTag]<C-n>   :FufBuffer<CR>
+nnoremap <silent> [FUFTag]<C-m>   :FufFile 
         \ <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
-nnoremap <silent> [FUFTag]<C-j>   :FuzzyFinderMruFile<CR>
-nnoremap <silent> [FUFTag]<C-k>   :FuzzyFinderMruCmd<CR>
-nnoremap <silent> [FUFTag]<C-p>   :FuzzyFinderDir 
+nnoremap <silent> [FUFTag]<C-j>   :FufMruFile<CR>
+nnoremap <silent> [FUFTag]<C-k>   :FufMruCmd<CR>
+nnoremap <silent> [FUFTag]<C-p>   :FufDir 
         \ <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
 "nnoremap <silent>  [FUFTag]<C-d>   :FuzzyFinderDir<CR>
 "nnoremap <silent>  [FUFTag]<C-b>   :FuzzyFinderBookmark<CR>
 "nnoremap <silent>  [FUFTag]<C-t>   :FuzzyFinderTag!<CR>
 "nnoremap <silent>  [FUFTag]<C-g>   :FuzzyFinderTaggedFile<CR>
-noremap <silent>  g]         :FuzzyFinderTag! <C-r>=expand('<cword>')<CR><CR>
+"noremap <silent>  g]         :FufTag! <C-r>=expand('<cword>')<CR><CR>
 "nnoremap <silent>  [FUFTag]b     :FuzzyFinderAddBookmark<CR>
 "nnoremap <silent>  [FUFTag]<C-e>   :FuzzyFinderEditInfo<CR>
 
@@ -780,6 +987,19 @@ noremap <silent>  g]         :FuzzyFinderTag! <C-r>=expand('<cword>')<CR><CR>
 nnoremap <silent> [Tag]<C-t>  :TlistToggle<CR>
 "let Tlist_Exit_OnlyWindow = 1
 let Tlist_File_Fold_Auto_Close = 1
+"let Tlist_Use_Right_Window = 1
+
+"}}}
+"" tagexplorer.vim {{{
+nnoremap <silent> <F11>  :TagExplorer<CR>
+
+"}}}
+"" tagbar.vim {{{
+nnoremap <silent> <Leader>t  :TagbarToggle<CR>
+let g:tagbar_left = 1
+let g:tagbar_width = 40
+let g:tagbar_autofocus = 1
+let g:tagbar_sort = 0
 
 "}}}
 "" errormarker.vim {{{
@@ -789,6 +1009,11 @@ let Tlist_File_Fold_Auto_Close = 1
 "}}}
 "" qbuf.vim {{{
 let g:qb_hotkey = ",<LT>"
+
+"}}}
+"" AutoComplPop {{{
+let g:acp_behaviorRubyOmniMethodLength = -1
+let g:acp_behaviorRubyOmniSymbolLength = -1
 
 "}}}
 "" OmniCppComplete {{{
@@ -820,6 +1045,22 @@ map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 "" vim-pathogen {{{
 "See http://www.vim.org/scripts/script.php?script_id=2332
 call pathogen#infect()
+
+"}}}
+"" cscope_quickfix {{{
+"See http://www.vim.org/scripts/script.php?script_id=862
+" let Cscope_JumpError = 0
+" let g:Cscope_Keymap = 0
+" nmap <C-\>s :Cscope s <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-\>g :Cscope g <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-\>d :Cscope d <C-R>=expand("<cword>")<CR> <C-R>=expand("%")<CR><CR>
+" nmap <C-\>c :Cscope c <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-\>t :Cscope t <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-\>e :Cscope e <C-R>=expand("<cword>")<CR><CR>
+" nmap <C-\>f :Cscope f <C-R>=expand("<cfile>")<CR><CR>
+" nmap <C-\>i :Cscope i ^<C-R>=expand("<cfile>")<CR>$<CR>
+" 
+" nmap <C-]>  :Cscope g <C-R>=expand("<cword>")<CR><CR>
 
 "}}}
 
