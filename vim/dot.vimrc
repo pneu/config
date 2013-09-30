@@ -279,8 +279,12 @@ command! -nargs=1 HighlightTodo
 "" Vimgrep wordwise/visualize {{{
 function! s:VimgrepWFunc(mode, dir, word)
   let dir = a:dir
+  if exists("b:VimgrepWDefaultDir")
+    let dir = b:VimgrepWDefaultDir
+  endif
   if a:mode == 'v'    " only characterwise-visual
     let word = getline(".")[col("'<")-1:col("'>")-1]
+    "+ 2byte character doesn't work well?
   elseif a:mode == 'n'
     let word = a:word
   else
@@ -298,19 +302,6 @@ function! s:VimgrepWFunc(mode, dir, word)
   endtry
 endfunction
 
-command! -nargs=* -buffer -complete=dir VimgrepW
-  \ call <SID>VimgrepWFunc(<f-args>)
-
-let g:VimgrepWDefaultDir='./**/*'
-nnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
-vnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
-"}}}
-"" Write/Read Session {{{
-command! WriteSession call <SID>_F_WriteSession()
-command! ReadSession call <SID>_F_ReadSession()
-"}}}
-"" Write/Read Session {{{
-command! -complete=file -nargs=1 Cgetfile call <SID>_F_GetErrorFile(<q-args>)
 "}}}
 "" Vimgrep visual-search {{{
 " See :help visual-search
@@ -327,6 +318,16 @@ command! -nargs=* -buffer -complete=dir VimgrepW
 let g:VimgrepWDefaultDir='./**/*'
 nnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
 vnoremap <silent> <expr> gs ":<C-u>call <SID>VimgrepWFunc('" . mode() . "', g:VimgrepWDefaultDir, expand('<cword>'))<CR>"
+
+"}}}
+"" Write/Read Session {{{
+command! WriteSession call <SID>_F_WriteSession()
+command! ReadSession call <SID>_F_ReadSession()
+
+"}}}
+"" Restore Error on Quickfix {{{
+command! -complete=file -nargs=1 Cgetfile call <SID>_F_GetErrorFile(<q-args>)
+
 "}}}
 
 
@@ -391,11 +392,10 @@ set whichwrap=b,s,<,>,[,]
   "  line when the cursor is on the first/last character in the line.
 
 "}}}
-"" Indentation"{{{
-set softtabstop=2
+"" Maximum width of text"{{{
 "set textwidth=78
 set textwidth=0
-  "+ don't wrap
+set wrap
 
 "}}}
 "" Search"{{{
@@ -562,7 +562,7 @@ set noexpandtab
 set noshiftround
 "set tabstop=8
 set tabstop=2
-set softtabstop=0
+let &softtabstop = &tabstop
 set noautoindent
 set nocindent
 set nosmartindent
@@ -604,7 +604,7 @@ set showmode
 "set statusline='['%n']'%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
 "set statusline=%<[%n]\ %f\ %h%r%m[%{&fenc}][%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=[0x%B]\ %c,%l/%L\ %y
 "set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=[0x%B]\ %c,%l/%L\ %y
-set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%cC,%l/%L\ [%{&ts}T,%{&sts}t,%{&sw}S]\ %y
+set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%l/%L,%cC\ [%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
   "+ Comment out 'cause using buftab.
   "+ show character code and return character in status line
 
@@ -967,20 +967,13 @@ nnoremap      [FUFTag]  <Nop>
 nmap        <C-q>   [FUFTag]
 "let g:FuzzyFinderOptions.Base.key_open=<CR>      "default
 "let g:FuzzyFinderOptions.Base.key_open_split=<C-j>
-nnoremap <silent> [FUFTag]<C-n>   :FufBuffer<CR>
-nnoremap <silent> [FUFTag]<C-m>   :FufFile 
+nnoremap <silent> [FUFTag]<C-n>   :FuzzyFinderBuffer<CR>
+nnoremap <silent> [FUFTag]<C-m>   :FuzzyFinderFile 
         \ <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
-nnoremap <silent> [FUFTag]<C-j>   :FufMruFile<CR>
-nnoremap <silent> [FUFTag]<C-k>   :FufMruCmd<CR>
-nnoremap <silent> [FUFTag]<C-p>   :FufDir 
+nnoremap <silent> [FUFTag]<C-j>   :FuzzyFinderMruFile<CR>
+nnoremap <silent> [FUFTag]<C-k>   :FuzzyFinderMruCmd<CR>
+nnoremap <silent> [FUFTag]<C-p>   :FuzzyFinderDir 
         \ <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
-"nnoremap <silent>  [FUFTag]<C-d>   :FuzzyFinderDir<CR>
-"nnoremap <silent>  [FUFTag]<C-b>   :FuzzyFinderBookmark<CR>
-"nnoremap <silent>  [FUFTag]<C-t>   :FuzzyFinderTag!<CR>
-"nnoremap <silent>  [FUFTag]<C-g>   :FuzzyFinderTaggedFile<CR>
-"noremap <silent>  g]         :FufTag! <C-r>=expand('<cword>')<CR><CR>
-"nnoremap <silent>  [FUFTag]b     :FuzzyFinderAddBookmark<CR>
-"nnoremap <silent>  [FUFTag]<C-e>   :FuzzyFinderEditInfo<CR>
 
 "}}}
 "" taglist.vim {{{
@@ -1061,6 +1054,24 @@ call pathogen#infect()
 " nmap <C-\>i :Cscope i ^<C-R>=expand("<cfile>")<CR>$<CR>
 " 
 " nmap <C-]>  :Cscope g <C-R>=expand("<cword>")<CR><CR>
+
+"}}}
+"" vim2hs {{{
+"See https://github.com/dag/vim2hs
+let g:haskell_conceal = 0
+let g:haskell_conceal_wide = 0
+let g:haskell_conceal_enumerations = 0
+let g:haskell_jmacro = 0
+
+"}}}
+"" tabular {{{
+"See https://github.com/godlygeek/tabular
+if exists(":Tabularize")
+  "nnoremap <silent> [Tag]a= :Tabularize /=<CR>
+  vnoremap <silent> [Tag]a= :Tabularize /=<CR>
+  "nnoremap <silent> [Tag]a: :Tabularize /:\zs<CR>
+  "vnoremap <silent> [Tag]a: :Tabularize /:\zs<CR>
+endif
 
 "}}}
 

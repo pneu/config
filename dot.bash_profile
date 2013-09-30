@@ -1,9 +1,9 @@
 # .bash_profile
 
 # Get the aliases and functions
-#if [ -f ~/.bashrc ]; then
-#	. ~/.bashrc
-#fi
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
 
 
 test -s ~/.alias && . ~/.alias || true
@@ -20,7 +20,7 @@ unset USERNAME
 export LC_NUMERIC=C
 export LC_TIME=C
 export LC_MESSAGES=C
-# PAGER='lv -c'
+#PAGER='lv -c'
 export WWW_HOME='www.google.com'
-export PAGER='lv -c'
+#export PAGER='lv -c'
 

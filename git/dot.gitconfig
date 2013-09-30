@@ -4,9 +4,10 @@
 [core]
 	#whitespace = trailing-space,fix,indent-with-non-tab,cr-at-eol
 	whitespace = trailing-space,space-before-tab
-	editor = vim
+	editor = gvim
+	autocrlf = false
 [push]
-	default = nothing
+	default = simple
 [color]
 	ui = auto
 [color "branch"]
@@ -25,8 +26,8 @@
 	changed = green
 	untracked = cyan
 [alias]
-	st = status
-	ci = commit
+	st = status --short --branch
+	ci = commit -q
 	br = branch
 	co = checkout
 	df = diff
@@ -34,8 +35,16 @@
 	l  = log --graph --decorate --pretty=oneline --abbrev-commit
 	la = log --graph --decorate --pretty=oneline --abbrev-commit --all
 	ls = ls-files
+	ignore = update-index --skip-worktree
+	unignore = update-index --no-skip-worktree
+	ignore = update-index --assume-unchaged
+	unignore = update-index --no-assume-unchaged
+	ignored = !git ls-files -v | grep "^[a-z]"
+	#diffall = !sh diffall.sh
 [i18n]
-	# commitEncoding = euc-jp
-	# logOutputEncoding = euc-jp
-[mergetool "vimdiff"]
-	path = /usr/local/bin/vimdiff
+	commitEncoding = sjis
+	logOutputEncoding = sjis
+[diff]
+	guitool = gvimdiff
+[difftool]
+	prompt = false
