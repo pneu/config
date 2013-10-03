@@ -237,7 +237,7 @@ if exists('&ambiwidth')
 endif
 
 "set default encoding if on windows
-if has('win32')
+if s:is_win()
   augroup DefaultFileencodingFileFormat
     autocmd!
     autocmd BufNewFile * set fileencoding=cp932
@@ -329,7 +329,6 @@ command! ReadSession call <SID>_F_ReadSession()
 command! -complete=file -nargs=1 Cgetfile call <SID>_F_GetErrorFile(<q-args>)
 
 "}}}
-
 
 "" [Miscellaneous settings]
 "" Compatibility {{{
@@ -623,7 +622,7 @@ set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='do
 let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
 if has('unix')
   set makeprg=LANGUAGE=C\ make
-elseif has('win32')
+elseif s:is_win()
   set makeprg=make
 endif
 
@@ -861,6 +860,23 @@ vnoremap <silent> [Tag]*  :<C-U>let @/=getline(".")[col("'<")-1:col("'>")-1]<CR>
   "decide comment string as value of filetype
 
 "}}}
+"" search visual block {{{
+vmap g/ y/<C-R>"<CR>
+
+"}}}
+"" window menu on Windows {{{
+if has("winaltkeys")
+  set winaltkeys=no
+  if s:is_win()
+    noremap <silent> <M-Space> :simalt ~<CR>
+    noremap <silent> <M-x> :simalt ~x<CR>
+    noremap <silent> <M-r> :simalt ~r<CR>
+    noremap <silent> <M-m> :simalt ~m<CR>
+    noremap <silent> <M-s> :simalt ~s<CR>
+  endif
+endif
+
+"}}}
 "" Templete {{{
 "au BufNewFile *.c    0r ~/.vim/skel/skeleton.c
 " \ |execute 'normal! G"_dd'
@@ -881,10 +897,6 @@ augroup InsertTemplete
   autocmd BufNewFile *.py   0r ~/.vim/skel/skeleton.py|normal! G
   "au BufWinEnter *.c 
 augroup END
-
-"}}}
-"" search visual block {{{
-vmap g/ y/<C-R>"<CR>
 
 "}}}
 
@@ -1029,7 +1041,7 @@ set completeopt=menuone,menu,longest,preview
 "See http://www.vim.org/scripts/script.php?script_id=2358
 if has('unix')
   set tags+=$HOME/.vim/tags/cpp_src/cpp
-elseif has('win32')
+elseif s:is_win()
   set tags+=$HOME/vimfiles/tags/cpp_src/cpp
 endif
 map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
