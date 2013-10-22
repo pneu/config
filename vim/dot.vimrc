@@ -22,11 +22,8 @@
 " 
 " }}}
 
-if has('unix')
-  source /etc/vimrc
-elseif has('win32')
-  runtime custom/vimrc
-endif
+" read custom script
+runtime custom/vimrc
 
 filetype plugin on
   "+ set default values (note that order of reading plugin)
