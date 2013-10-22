@@ -140,21 +140,25 @@ endfunction
 "}}}
 "" void s:_F_SetRelativeNumber() "{{{
 function! s:_F_SetRelativeNumber()
-  if &number == 0
-    setlocal relativenumber
+  if v:version >= 703
+    if &number == 0
+      setlocal relativenumber
+    endif
   endif
 endfunction
 
 "}}}
 "" void s:_F_ToggleAbsRelNumber() "{{{
 function! s:_F_ToggleAbsRelNumber(setmode)
-  if &number == 0 && &relativenumber == 0
-  else
-    "setlocal numberwidth=5
-    if a:setmode == "nu"
-      setlocal number
-    elseif a:setmode == "rnu"
-      setlocal relativenumber
+  if v:version >= 703
+    if &number == 0 && &relativenumber == 0
+    else
+      "setlocal numberwidth=5
+      if a:setmode == "nu"
+        setlocal number
+      elseif a:setmode == "rnu"
+        setlocal relativenumber
+      endif
     endif
   endif
 endfunction
