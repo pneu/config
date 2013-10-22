@@ -45,6 +45,11 @@
 	commitEncoding = sjis
 	logOutputEncoding = sjis
 [diff]
-	guitool = gvimdiff
+	#guitool = gvimdiff
+	guitool = winmerge
 [difftool]
 	prompt = false
+[difftool "winmerge"]
+	# See http://ptech.g.hatena.ne.jp/noromanba/20120602/1338633091
+	path = C:/Program Files/WinMerge/WinMergeU
+	cmd = \"C:/Program Files/WinMerge/WinMergeU\" -e -ub -dl \"Base\" -dr \"Mine\" \"$LOCAL\" \"$REMOTE\"
