@@ -335,7 +335,7 @@ command! -complete=file -nargs=1 Cgetfile call <SID>_F_GetErrorFile(<q-args>)
 "" Compatibility {{{
 "set cpoptions-=B
 "set cpoptions-=<
-  "+ TODO: don't work
+set nocompatible
 
 "}}}
 "" Language/Locale/Ctype etc. {{{
@@ -344,14 +344,7 @@ language mes C
 "}}}
 "" Modeline {{{
 set modeline
-  "+ enable mode line.
 set modelines=5
-  "+ check modeline from top or bottom of text
-
-"}}}
-"" Compatibility {{{
-set nocompatible
-  "+ Set off (that is set nocompatible) automatically when $MYVIMRC.
 
 "}}}
 "" Restore/Recovery/Backup or Session"{{{
@@ -362,7 +355,6 @@ set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize
 "}}}
 "" Substitution in command-line mode "{{{
 set gdefault
-  "+ :substitute flag `g' is always on
 
 "}}}
 "" Completion"{{{
@@ -373,9 +365,7 @@ set wildmode=longest:full
 "}}}
 "" Buffer status"{{{
 set hidden
-  "+ traverse between the buffers without :w
 set autoread
-  "+ When detection to have been changed outside of Vim, read it automatically
 
 "}}}
 "" Window behavior"{{{
@@ -386,14 +376,10 @@ set noequalalways
 "}}}
 "" Behavior when the cursor on First/Last character"{{{
 set backspace=indent,eol,start
-  "+ allow BSing over everything in insert mode
 set whichwrap=b,s,<,>,[,]
-  "+ allow specified keys (<BS>, <Space>, ...etc.) to move to previout/next
-  "  line when the cursor is on the first/last character in the line.
 
 "}}}
 "" Maximum width of text"{{{
-"set textwidth=78
 set textwidth=0
 set wrap
 
@@ -402,20 +388,15 @@ set wrap
 set ignorecase
 set smartcase
 set showmatch
-  "+ show matching brackets/parentheses
 set shortmess=aoOtTI
-  "+ default value is "filnxtToO"
 
 "}}}
 "" Shut up key input"{{{
 set esckeys
-  "+ required to be able to use keypad keys and map missed escape sequences
 set timeout
 set nottimeout
 set timeoutlen=650
-  "+ timeout length when map sequence pressed
 set ttimeoutlen=-1
-  "+ depends on timeoutlen
 
 "}}}
 "" use unix slash for path separation"{{{
@@ -503,25 +484,15 @@ endif
   "Not set ':syntax' in this section.
 
 "}}}
-"" Color limit {{{
+"" colors(Colorscheme/Color limit) {{{
 if $TERM ==? 'xterm'
   set t_Co=256
     "+ your system must have 256 palette.
-elseif $TERM =~? 'screen.*'
-  set t_Co=256
-endif
-  "+ (See http://vim-users.jp/2009/08/hack64/)
-
-"}}}
-"" Colorscheme {{{
-if $TERM ==? 'xterm'
-  "colorscheme torte
-  "colorscheme delek
-
   "colorscheme inkpot
   colorscheme candycode
     "+ your system must have 256 palette.
 elseif $TERM =~? 'screen.*'     " TODO: modify regex
+  set t_Co=256
   "colorscheme candycode
     "+ TODO: set colorscheme
 endif
@@ -532,7 +503,6 @@ endif
 "" [Look and feel]
 "" Highlight syntax settings {{{
 syntax enable
-  "+ enable syntax highlighting
 syntax on
 
 "}}}
@@ -545,12 +515,8 @@ set listchars=tab:>.,eol:$,trail:_,precedes:<,extends:\
   "+ 'set listchars' is setting for 'set list'
 
 scriptencoding euc-jp
-  "+ Convert the following lines.
-  "+ (from this line to described ':scriptencoding')
-
-"highlight JpSpace cterm=underline ctermfg=Blue guifg=Blue
-"au BufRead,BufNew * match JpSpace /｡｡/
-  "+ Following two settings bring ﾁｴｳﾑ､ﾎｶ・into sight
+highlight JpSpace cterm=underline ctermfg=Blue guifg=Blue
+au BufRead,BufNew * match JpSpace /｡｡/
   "+ (See http://d.hatena.ne.jp/studio-m/20080117/1200552387)
 scriptencoding
 
@@ -560,7 +526,6 @@ filetype indent off
 set shiftwidth=2
 set noexpandtab
 set noshiftround
-"set tabstop=8
 set tabstop=2
 let &softtabstop = &tabstop
 set noautoindent
@@ -594,20 +559,10 @@ set foldenable
 "}}}
 "" Appearance of the status line {{{
 set laststatus=2
-  "+ always show status line
 set ruler
-  "+ show cursor line and column
 set showcmd
-  "+ show command inputing in status line
-set showmode
-  "+ display mode INSERT/REPLACE/...
-"set statusline='['%n']'%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
-"set statusline=%<[%n]\ %f\ %h%r%m[%{&fenc}][%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=[0x%B]\ %c,%l/%L\ %y
-"set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=[0x%B]\ %c,%l/%L\ %y
+set noshowmode
 set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%(%{&fenc}/%)%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%l/%L,%cC\ [%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
-  "+ Comment out 'cause using buftab.
-  "+ show character code and return character in status line
-
 
 "}}}
 "" Highlight the current line {{{
@@ -668,14 +623,8 @@ vmap    ,   [Tag]
 
 "}}}
 "" Insert date {{{
-inoremap <silent> <special> <C-;>   <C-r>=strftime('%Y%m%d')<CR>
-nnoremap <silent> <special> <C-;>   :<C-u>put! =strftime('%Y%m%d')<CR>
-"inoremap <silent> <special> <C-F5>   <C-r>=strftime('%Y%m%d')<CR>
-"nnoremap <silent> <special> <C-F5>   :<C-u>put! =strftime('%Y%m%d')<CR>
-"inoremap <silent> <special> <C-F5> 
-"  \ <BS><C-r>=strftime('%Y-%m-%dT%H%M%S')<CR>
-"nnoremap <silent> <special> [Tag]<C-F5> 
-"  \ :<C-u>put! =strftime('%Y-%m-%dT%H%M%S')<CR>
+inoremap <silent> <special> <C-;>   <C-r>=strftime('%Y%m%dT%H%M%S')<CR>
+nnoremap <silent> <special> <C-;>   :<C-u>put! =strftime('%Y%m%dT%H%M%S')<CR>
 
 "}}}
 "" Toggle option number {{{
@@ -685,22 +634,10 @@ nnoremap <silent> [Tag]n  :<C-u>call <SID>Toggle_option('number')<CR>
 ""  {{{
 nnoremap <silent> gl
   \ :<C-u>execute 'normal ' .'0' .(v:count-1<0 ? 0 : v:count-1) .'l'<CR>
-"set scrolloff=999    "recenter (almost same as zz)
-set scrolloff=0
-"nnoremap <silent>  n nzz<CR>
-"nnoremap <silent>  N Nzz<CR>
-"nnoremap <silent>  * *zz<CR>
-"nnoremap <silent>  # #zz<CR>
-"nnoremap <silent>  g*  g*zz<CR>
-"nnoremap <silent>  g#  g#zz<CR>
-set sidescroll=4
-set sidescrolloff=14
-"nnoremap <silent> <C-S-y> zh
-"nnoremap <silent> <C-S-e> zl
 
 "}}}
 "" Recenter as searching word {{{
-"set scrolloff=999    "recenter (almost same as zz)
+"set scrolloff=999
 set scrolloff=0
 "nnoremap <silent>  n nzz<CR>
 "nnoremap <silent>  N Nzz<CR>
@@ -717,8 +654,6 @@ set sidescrolloff=14
 "" Move between buffers or tabs or windows {{{
 nnoremap <silent> <Space>   :bn<CR>
 nnoremap <silent> <BS>    :bp<CR>
-"nnoremap <silent>  <S-Space> :bp<CR>
-"nnoremap <silent>  <Bslash>  :bp<CR>
 nnoremap <silent> <C-p>   :tabp<CR>
 nnoremap <silent> <C-n>   :tabn<CR>
 nnoremap <silent> <C-h>   <C-w>h
@@ -726,8 +661,6 @@ nnoremap <silent> <C-l>   <C-w>l
 nnoremap <silent> <C-j>   <C-w>j
 nnoremap <silent> <C-k>   <C-w>k
 inoremap <silent> <C-w>   <Esc>
-
-nnoremap <silent> [Tag]w    <C-w><C-w>
 
 "}}}
 "" In Command-Line mode, map C-a and C-e as emacs {{{
@@ -807,8 +740,7 @@ nnoremap <silent> [Tag]Z  zM
 
 "}}}
 "" Change into base directory of this file {{{
-nnoremap <silent> [Tag]b  :lcd %:h<CR>
-
+"nnoremap <silent> [Tag]b  :lcd %:h<CR>
 command! -bang -bar -nargs=0 CDl cd<bang> %:h
 command! -bang -bar -nargs=0 CDL lcd<bang> %:h
 
@@ -855,14 +787,14 @@ nnoremap <silent> [Tag]*  :<C-U>let @/='\<'.expand('<cword>').'\>'<CR>
 vnoremap <silent> [Tag]*  :<C-U>let @/=getline(".")[col("'<")-1:col("'>")-1]<CR>
 
 "}}}
+"" search visual block {{{
+vmap g/ y/<C-R>"<CR>
+
+"}}}
 "" Duplicate lines added comment {{{
   "+ TODO: 
 "nnoremap gp    
   "decide comment string as value of filetype
-
-"}}}
-"" search visual block {{{
-vmap g/ y/<C-R>"<CR>
 
 "}}}
 "" window menu on Windows {{{
@@ -1092,12 +1024,6 @@ endif
 runtime custom/after/vimrc
 
 "" [memo]
-"au FileType * set formatoptions-=r "don't continue comment line automatically
-"au FileType * set formatoptions-=o "don't continue comment line automatically
-"set formatoptions-=r   "don't continue comment line automatically
-"set formatoptions-=o   "don't continue comment line automatically
-
-"" [memo.2]
 command! CalcFP 
   \ :echo len(filter(readfile($MYVIMRC),'v:val !~ "^\\s*$\\|^\\s*\""'))
     "+ See http://vim.g.hatena.ne.jp/kabiy/20090712/1247378981
