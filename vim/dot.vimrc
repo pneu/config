@@ -652,8 +652,11 @@ set sidescrolloff=14
 
 "}}}
 "" Move between buffers or tabs or windows {{{
-nnoremap <silent> <Space>   :bn<CR>
-nnoremap <silent> <BS>    :bp<CR>
+nnoremap <expr> [Tag]L  exists('w:locksw')
+  \ ? ':unlet w:locksw<CR> | :echo "unlocked"<CR>'
+  \ : ':let w:locksw=1<CR> | :echo "LOCKED"<CR>'
+nnoremap <expr> <silent> <Space> exists('w:locksw') ? '' : ':bn<CR>'
+nnoremap <expr> <silent> <BS>    exists('w:locksw') ? '' : ':bp<CR>'
 nnoremap <silent> <C-p>   :tabp<CR>
 nnoremap <silent> <C-n>   :tabn<CR>
 nnoremap <silent> <C-h>   <C-w>h
