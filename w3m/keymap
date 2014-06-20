@@ -47,7 +47,9 @@ keymap	C-r	REDO
 
 keymap	C-j	GOTO_LINK
 keymap	C-]	GOTO_LINK
+keymap	C-m	GOTO_LINK
 keymap	C-J	TAB_LINK
+keymap	C-M	TAB_LINK
 keymap	C-s	SAVE_LINK
 keymap	I	VIEW_IMAGE
 keymap	ESC-I	SAVE_IMAGE
@@ -67,7 +69,9 @@ keymap	t	TAB_GOTO
 keymap	T	TAB_GOTO_RELATIVE
 
 keymap	C-i	NEXT
+keymap	C-I	NEXT
 keymap	C-o	PREV
+keymap	C-O	PREV
 keymap	b	SELECT_MENU
 
 keymap	C-t	NEW_TAB
@@ -81,7 +85,7 @@ keymap	n	SEARCH_NEXT
 keymap	N	SEARCH_PREV
 
 
-keymap	C-m	MENU
-keymap	C-O	OPTIONS
+keymap	ESC-m	MENU
+keymap	ESC-o	OPTIONS
 keymap	q	QUIT
 keymap	Q	EXIT
