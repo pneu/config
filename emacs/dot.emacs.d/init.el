@@ -1,3 +1,5 @@
+(setq load-path (cons (concat (getenv "HOME") "/.emacs.d/") load-path))
+
  ;; user private
 (make-local-variable 'user-private-dir)
 (setq user-private-dir (concat user-emacs-directory "private/"))
