@@ -562,7 +562,7 @@ set laststatus=2
 set ruler
 set showcmd
 set noshowmode
-set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%{&enc}/%{&fenc}/%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%cC,%l/%L\ [%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
+set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%{&enc}/%{&fenc}/%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%cC,%l/%L\ [%{exists('w:locksw')?'L,':''}%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
 
 "}}}
 "" Highlight the current line {{{

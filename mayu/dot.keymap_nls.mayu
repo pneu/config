@@ -1,0 +1,408 @@
+# local version: 2.2d
+# You are recommended to take a symbol, 
+# "-DUSE104on109mix" on jp106 keyboard.
+
+# include settings  {{{
+include "109.mayu"    # 109
+if ( USE104on109mix )
+  def subst  A-半角/全角        = $ToggleIME
+  def subst  S-*_2              = $COMMERCIAL_AT
+  def subst  S-*_6              = $CIRCUMFLEX_ACCENT
+  def subst  S-*_7              = $AMPERSAND
+  def subst  S-*_8              = $ASTERISK
+  def subst  S-*_9              = $LEFT_PARENTHESIS
+  def subst  S-*_0              = $RIGHT_PARENTHESIS
+  def subst  S-*Hyphen          = $LOW_LINE
+  def subst ~S-*Caret           = $EQUALS_SIGN
+  def subst  S-*Caret           = $PLUS_SIGN
+  def subst ~S-*Atmark          = $LEFT_SQUARE_BRACKET
+  def subst  S-*Atmark          = $LEFT_CURLY_BRACKET
+  def subst ~S-*OpenBracket     = $RIGHT_SQUARE_BRACKET
+  def subst  S-*OpenBracket     = $RIGHT_CURLY_BRACKET
+  def subst ~S-*CloseBracket    = $REVERSE_SOLIDUS
+  def subst  S-*CloseBracket    = $VERTICAL_LINE
+  def subst  S-*Semicolon       = $COLON
+  def subst ~S-*Colon           = $APOSTROPHE
+  def subst  S-*Colon           = $QUOTATION_MARK
+  def subst ~S-*ReverseSolidus  = $GRAVE_ACCENT
+  def subst  S-*ReverseSolidus  = $TILDE
+endif
+
+#}}}
+#  key sequence definition  {{{
+#
+ keyseq $openlinereturn = Return Left
+ keyseq $openthisline = Home Return Left
+ keyseq $opennextline = End Return
+ keyseq $EmacsEdit/kill-word    = S-C-Right C-X
+ keyseq $EmacsEdit/backward-kill-word = S-C-Left C-X
+ keyseq $EmacsEdit/transpose-chars  = S-Right C-X Left C-V Right
+ keyseq $EmacsEdit/upcase-word    = S-C-Right C-C *&Sync \
+            &ClipboardUpcaseWord C-V
+ keyseq $EmacsEdit/downcase-word  = S-C-Right C-C *&Sync \
+            &ClipboardDowncaseWord C-V
+ keyseq $EmacsEdit/kill-line    = &EmacsEditKillLineFunc S-End C-X \
+      &Sync &EmacsEditKillLinePred((Delete), (Return Left))
+ keyseq $EmacsEdit/kill-line-prev   = &EmacsEditKillLineFunc S-Home C-X \
+      &Sync &EmacsEditKillLinePred((Delete), (Return Left))
+
+#}}}
+
+keymap myGlobal
+#  basic setting    {{{
+
+#  Modifier:    {{{
+## ctrl
+ mod ctrl     += E0英数
+ key *E0英数  = *LeftControl
+
+#mod ctrl     += E0無変換
+#key *E0無変換= *LeftControl
+
+if ( THUMB_BS )
+  key *E0無変換= *BackSpace
+else
+## win
+  mod win    += E0無変換
+  key *E0無変換= *LeftWindows
+endif
+
+#mod alt      -= RightAlt
+#mod win      += RightAlt
+#key *RightAlt= *LeftWindows
+
+## alt
+#mod alt    += 無変換
+#key *無変換= *LeftAlt
+
+ mod mod0   += !!変換
+ key R-*変換= &Ignore
+ key M0-*IC-変換    = $ToggleIME  # 変換 needs to assign mod0
+
+ mod alt    += E0ひらがな
+ key *E0ひらがな  = *RightAlt
+
+if ( HHKBpro )
+  # Happy Hacking Keyboard Lite 2 Setting: RightAlt when SW1 is on.
+  def key RightAlt_lite2  = E0-0x38
+  mod alt   += RightAlt_lite2
+endif
+
+## shift
+ mod shift    += !!Space
+ key R-*Space = &Ignore
+
+if ( ABOVE_WIN7 )
+  def key E0RightShift  = E0-0x36
+  mod shift += E0RightShift
+  key *E0RightShift = *LShift
+endif
+
+#}}}
+#  Swap:      {{{
+
+# * swap Esc for 半角/全角
+#
+#def subst *Esc   = *半角/全角
+if ( HHKBpro )
+  # def subst ~S-*半角/全角 = GraveAccent
+  # def subst S-*半角/全角  = BackQuote
+else
+  # def subst *半角/全角  = *Esc
+endif
+def subst ~S-*E0半角/全角 = $GRAVE_ACCENT
+def subst S-*E0半角/全角  = $TILDE
+
+#}}}
+#  Other:     {{{
+# * switch default setting(xkeymacs-ish)
+#
+#key *L9-C-S-A-Q  = &Toggle(Lock9)
+#key L9-*   = &Default    # こういう表記はできない
+
+# * for confirming settings
+#
+ key S-C-A-Q    = &DescribeBindings
+ key S-C-A-M    = &LoadSetting &HelpMessage(mayu, SuccessToReload)
+
+#}}}
+
+#}}}
+#  key to move, resize, hide, appear Window, Cursor {{{
+
+#  Console Window   {{{
+# * [refered to default.mayu]
+#
+ key S-A-A  = &WindowClingToLeft  #ウィンドウを左に寄せる
+ key S-A-E  = &WindowClingToRight #ウィンドウを右に寄せる
+ key S-A-P  = &WindowClingToTop #ウィンドウを上に寄せる
+ key S-A-N  = &WindowClingToBottom  #ウィンドウを下に寄せる
+ key S-A-F  = &WindowClingToTop #ウィンドウを上に寄せる
+ key S-A-C  = &WindowClingToBottom  #ウィンドウを下に寄せる
+ key S-A-Left = &WindowMove(-16, 0) #ウィンドウの移動
+ key S-A-Right= &WindowMove(16, 0)  # 〃
+ key S-A-Up   = &WindowMove(0, -16) # 〃
+ key S-A-Down = &WindowMove(0, 16)  # 〃
+ key ~M0-C-A-S-L  = &WindowLower    #ウィンドウを一番下へ
+ key ~M0-C-A-S-R  = &WindowRaise    #ウィンドウを一番上へ
+ key ~M0-C-A-S-H  = &WindowHMaximize  # ウィンドウを横方向に最大化
+ key ~M0-C-A-S-V  = &WindowVMaximize  # ウィンドウを縦方向に最大化
+
+ key M0-~C-S-A-H  = &WindowMove(-16, 0) #ウィンドウの移動
+ key M0-~C-S-A-L  = &WindowMove(16, 0)  # 〃
+ key M0-~C-S-A-K  = &WindowMove(0, -16) # 〃
+ key M0-~C-S-A-J  = &WindowMove(0, 16)  # 〃
+
+#key M0-W-Enter   = &WindowMonitor(0, true, false)
+ key M0-C-T   = &Sync &WindowToggleTopMost &WindowSetAlpha(67)
+
+#}}}
+#  Console Cursor   {{{
+# * vim-like keybindings
+
+ key M0-*J    = *Down
+ key M0-*K    = *Up
+ key M0-*H    = *Left
+ key M0-*L    = *Right
+#key M0-Space   = 
+#key M0-Tab   = $WindowSelectOpen
+ key M0-I   = A-Right
+ key M0-O   = A-Left
+
+#}}}
+#  resize window      {{{
+
+ key A-F10  = &Sync &WindowMaximize
+ key A-F5   = &Sync &WindowMinimize
+
+#}}}
+#  Mouse Emulate    {{{
+
+#key M0-C-A-J   = &MouseMove(0, 16)
+#key M0-C-A-K   = &MouseMove(0, -16)
+#key M0-C-A-H   = &MouseMove(-16, 0)
+#key M0-C-A-L   = &MouseMove(16, 0)
+#key M0-C-M     = &MouseWheel(-16)
+#key M0-C-Comma = &MouseWheel(16)
+
+#key M0-S-A-J   = &MouseMove(0, 160)
+#key M0-S-A-K   = &MouseMove(0, -160)
+#key M0-S-A-H   = &MouseMove(-160, 0)
+#key M0-S-A-L   = &MouseMove(160, 0)
+
+#}}}
+#  Mouse Emulate    {{{
+ key C-*IC-OpenBracket  = Esc
+
+#}}}
+
+#}}}
+
+keymap custommap : myGlobal
+#  ~と`に関するマップ [for usKB(FKB-86E like) on jp106(109)KB]  {{{
+#
+ def key BackSpace2   = 0x7d
+ key *BackSpace2    = *BackSpace
+#key C-BackSpace2   = &Default
+ key C-BackSpace2   = C-BackSpace
+ key M-BackSpace2   = M-BackSpace
+
+#}}}
+#  guru {{{
+#
+#key m0-S-Space = BackSpace
+
+#}}}
+#  majestouch minila {{{
+#
+ key M0-Semicolon=BackSpace
+
+#}}}
+#  operation on explorer {{{
+#
+ #my computer
+ key W-E  = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,::{20D04FE0-3AEA-1069-A2D8-08002B30309D}", , ShowNormal)
+ #my documents
+ #key M0-E  = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,::{450D8FBA-AD25-11D0-98A8-0800361B1103}", , ShowNormal)
+ #key M0-E  = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,%HOME%", , ShowNormal)
+ key M0-E = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,C:\Users\pneu", , ShowNormal)
+ #open context menu
+ key M0-S-Space = Apps
+ key M0-r = F2
+
+#key C-*IC-S-Space  = $ToggleIME  # prefix S added because of SANDS
+
+#}}}
+
+keymap emacslike : custommap
+#  emacs-like keymap          {{{
+
+ key C-F    = Right
+ key C-B    = Left
+ key C-P    = Up
+ key C-N    = Down
+ key C-A    = Home
+ key C-E    = End
+
+ key C-BackSpace  = &Default
+ key C-D    = Delete
+ key C-H    = BackSpace
+ key C-M    = Enter
+#key C-RightSquareBracket = C-Z     # undo
+
+ key C-S    = C-F     # isearch forward
+#key C-Q    = ???     # mayu quit(xkeymacs-ish)
+#key C-U    = C-Z     # undo
+
+#key C-\    = &SetImeStatus(toggle)
+#key C-\    = &Prefix(EmacsMark)
+#key C-L    = &WindowRedraw &Recenter
+
+#key *M0-S-C-A    = S-Home    # 行頭(選択)
+#key *M0-S-C-B    = S-Left    # ←(選択)
+#key *M0-S-C-E    = S-End     # 行末(選択)
+#key *M0-S-C-F    = S-Right   # →(選択)
+#key *M0-S-C-N    = S-Down    # ↓(選択)
+#key *M0-S-C-P    = S-Up      # ↑(選択)
+#
+#key S-C-V    = S-Next    # 次頁(選択)
+#key S-M-V    = S-Prior   # 前頁(選択)
+
+keymap emacsedit : emacslike
+ key C-A-O    = $openlinereturn
+ key ~S-C-O   = $opennextline
+ key S-C-O    = $openthisline
+
+ key C-K    = $EmacsEdit/kill-line
+ key M-D    = $EmacsEdit/kill-word
+ key M-BackSpace  = $EmacsEdit/backward-kill-word
+ key C-U    = $EmacsEdit/kill-line-prev
+
+#~~~~~~~~~~~~~~~~~
+# * except of emacs
+#
+#key C-Y      = C-V
+
+#}}}
+#  shell execute(xkeymacs-ish)  {{{
+
+#key S-A-_1 = &ShellExecute("open", "C://WINDOWS/system32/cmd.exe", , $WindowClass, ShowNormal)
+#key S-A-_2 = &ShellExecute("open", "F://Prog_g2/xyzzy/xyzzy.exe", , , ShowNormal)
+
+#}}}
+#  for mouse settings   {{{
+# MX-Revolution patched updated-121
+# http://d.hatena.ne.jp/solipt/20060925/1159118407
+
+### cannot emulation...
+#def key F18DOWN  = 0xe5
+#def key F18UP    = 0x81
+#key D-F18    = &VK(D-RButton)
+#key D-F18    = &VK(D-RButton)
+#key F18    = &VK(RButton) &Sync &VK(U-F18)
+#def key F18    = 0xe5
+#def key PROCESSKEY = 0xe5
+#key D-PROCESSKEY = &VK(D-RButton)
+#def key F18    = 0x81
+#key U-F18    = &VK(U-RButton)
+#def key F18DOWN  = 0xe5
+#def key F18UP    = 0x81
+#key F18DOWN    = &VK(RButton)
+#key R-F18    = &Ignore
+#key F18UP    = &VK(U-RButton)
+#key C-F14    = C-V
+
+#}}}
+
+window window-select /:window-select:SysListView32$/ : emacslike
+#  window-select plugin   {{{
+# http://www.tamanegi.org/prog/mayu-plugins/
+
+#key Enter  = $WindowSelectApply
+#key C-G  = $WindowSelectCancel
+#key ESC  = $WindowSelectCancel
+#key ~S-Tab = $WindowSelectNext
+#key S-Tab  = $WindowSelectPrev
+#key _1   = $WindowSelectSel1
+#key _2   = $WindowSelectSel2
+#key _3   = $WindowSelectSel3
+#key _4   = $WindowSelectSel4
+#key _5   = $WindowSelectSel5
+#key _6   = $WindowSelectSel6
+#key _7   = $WindowSelectSel7
+#key _8   = $WindowSelectSel8
+#key _9   = $WindowSelectSel9
+#key _0   = $WindowSelectSel10
+#key S-_1 = $WindowSelectSel-1
+#key S-_2 = $WindowSelectSel-2
+#key S-_3 = $WindowSelectSel-3
+#key S-_4 = $WindowSelectSel-4
+#key S-_5 = $WindowSelectSel-5
+#key S-_6 = $WindowSelectSel-6
+#key S-_7 = $WindowSelectSel-7
+#key S-_8 = $WindowSelectSel-8
+#key S-_9 = $WindowSelectSel-9
+#key S-_0 = $WindowSelectSel-10
+
+#}}}
+
+#  アプリケーション別の動作   {{{
+
+### * All application setting
+window allapp /.*/ : emacslike
+
+### * Poderosa
+window poderosa /Poderosa\.exe/ : custommap
+
+### * xyzzy
+window xyzzy /xyzzy\.exe/ : custommap
+
+### * meadow
+window meadow /Meadow\.exe/ : custommap
+
+### * Emacs
+window emacs /emacs\.exe/ : custommap
+
+### * mintty on cygwin
+window cyg_mintty /mintty\.exe/ : custommap
+
+### * firefox
+window firefox /firefox\.exe/ : custommap
+#key C-G    = C-K     # focus search bar
+
+### * gvim
+window gvim /gvim\.exe/ : custommap
+
+### * Tales Weaver (to take SS with C-S)
+window talesweaver /InphaseNXD\.exe/ : custommap
+
+### * vmware
+window vmware /vmplayer\.exe/ : myGlobal
+
+### * PuTTY
+window putty /PUTTY\.EXE/ : custommap
+
+### * PuTTY.jp
+window puttyjp /puttyjp\.exe/ : custommap
+
+### * MINGW32(MSYS)
+window mingw /rxvt\.exe/ : custommap
+
+### * RealVNC
+window realvnc /vncviewer\.exe/ : myGlobal
+
+# ### * opera
+#window opera /opera\.exe:OpWindow/ : custommap
+window opera /opera\.exe/ : emacslike
+
+### * sylera
+#window sylera /sylera\.exe/ : emacslike
+
+### * Visual Studio
+window visualstudio /WDExpress\.exe/ : emacslike
+
+#}}}
+
+# END         {{{
+# vim: tw=78:ts=2:sw=2:sts=2:et:
+# vim: foldmethod=marker
