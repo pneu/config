@@ -59,17 +59,38 @@ keymap myGlobal
 #mod ctrl     += E0–³•ÏŠ·
 #key *E0–³•ÏŠ·= *LeftControl
 
+if ( WORKAROUND104 )
+  mod ctrl    -= LeftControl
+  key *LeftControl = *”¼Šp/‘SŠp
+endif
+
 if ( THUMB_BS )
   key *E0–³•ÏŠ·= *BackSpace
 else
+  if ( MOD1 )
+    if ( MOD1_ONESHOT )
+      mod mod1 += !!E0–³•ÏŠ·
+      key R-*E0–³•ÏŠ· = &Ignore
+      key M1-*IC-E0–³•ÏŠ· = *BackSpace
+    else
+      key *E0–³•ÏŠ·= *BackSpace
+
+      def key ZH = E0-0x29
+      mod mod1 += ZH
+      #mod mod1 += !!ZH
+      #key R-*ZH = &Ignore
+      #key M1-*IC-ZH = *”¼Šp/‘SŠp
+    endif
+  else
 ## win
-  mod win    += E0–³•ÏŠ·
-  key *E0–³•ÏŠ·= *LeftWindows
+    mod win    += E0–³•ÏŠ·
+    key *E0–³•ÏŠ·= *LeftWindows
+  endif
 endif
 
-#mod alt      -= RightAlt
-#mod win      += RightAlt
-#key *RightAlt= *LeftWindows
+mod alt      -= RightAlt
+mod win      += RightAlt
+key *RightAlt= *LeftWindows
 
 ## alt
 #mod alt    += –³•ÏŠ·
@@ -89,8 +110,8 @@ if ( HHKBpro )
 endif
 
 ## shift
- mod shift    += !!Space
- key R-*Space = &Ignore
+ mod shift    += !!!Space
+ #key R-*Space = &Ignore
 
 if ( ABOVE_WIN7 )
   def key E0RightShift  = E0-0x36
@@ -110,11 +131,70 @@ if ( HHKBpro )
 else
   # def subst *”¼Šp/‘SŠp  = *Esc
 endif
-def subst ~S-*E0”¼Šp/‘SŠp = $GRAVE_ACCENT
-def subst S-*E0”¼Šp/‘SŠp  = $TILDE
+if ( HHKBproTypeS )
+  key *E0”¼Šp/‘SŠp      = &SetImeStatus(off)
+else
+  def subst ~S-*E0”¼Šp/‘SŠp = $GRAVE_ACCENT
+  def subst S-*E0”¼Šp/‘SŠp  = $TILDE
+endif
 
 #}}}
 #  Other:     {{{
+if ( MOD1 )
+  if ( NUM_CENTER )
+    def subst M1-~S-*A = *_1
+    def subst M1-S-*A = $EXCLAMATION_MARK
+    def subst M1-~S-*S = *_2
+    def subst M1-S-*S = $COMMERCIAL_AT
+    def subst M1-~S-*D = *_3
+    def subst M1-S-*D = $NUMBER_SIGN
+    def subst M1-~S-*F = *_4
+    def subst M1-S-*F = $DOLLAR_SIGN
+    def subst M1-~S-*G = *_5
+    def subst M1-S-*G = $PERCENT_SIGN
+    def subst M1-~S-*H = *_6
+    def subst M1-S-*H = $CIRCUMFLEX_ACCENT
+    def subst M1-~S-*J = *_7
+    def subst M1-S-*J = $AMPERSAND
+    def subst M1-~S-*K = *_8
+    def subst M1-S-*K = $ASTERISK
+    def subst M1-~S-*L = *_9
+    def subst M1-S-*L = $LEFT_PARENTHESIS
+    def subst M1-~S-*Semicolon = *_0
+    def subst M1-S-*Semicolon = $RIGHT_PARENTHESIS
+    def subst M1-~S-*Colon = *Hyphen
+    def subst M1-S-*Colon = $LOW_LINE
+    def subst M1-~S-*RightSquareBracket = $EQUALS_SIGN
+    def subst M1-S-*RightSquareBracket = $PLUS_SIGN
+  endif
+  if ( NUM_ABOVE )  # don't work
+    def subst M1-~S-*Q = *_1
+    def subst M1-S-*Q = $EXCLAMATION_MARK
+    def subst M1-~S-*W = *_2
+    def subst M1-S-*W = $COMMERCIAL_AT
+    def subst M1-~S-*E = *_3
+    def subst M1-S-*E = $NUMBER_SIGN
+    def subst M1-~S-*R = *_4
+    def subst M1-S-*R = $DOLLAR_SIGN
+    def subst M1-~S-*T = *_5
+    def subst M1-S-*T = $PERCENT_SIGN
+    def subst M1-~S-*Y = *_6
+    def subst M1-S-*Y = $CIRCUMFLEX_ACCENT
+    def subst M1-~S-*U = *_7
+    def subst M1-S-*U = $AMPERSAND
+    def subst M1-~S-*I = *_8
+    def subst M1-S-*I = $ASTERISK
+    def subst M1-~S-*O = *_9
+    def subst M1-S-*O = $LEFT_PARENTHESIS
+    def subst M1-~S-*P = *_0
+    def subst M1-S-*P = $RIGHT_PARENTHESIS
+    def subst M1-~S-*CommercialAt = *Hyphen
+    def subst M1-S-*CommercialAt = $LOW_LINE
+    def subst M1-~S-*LeftSquareBracket = $EQUALS_SIGN
+    def subst M1-S-*LeftSquareBracket = $PLUS_SIGN
+  endif
+endif
+
 # * switch default setting(xkeymacs-ish)
 #
 #key *L9-C-S-A-Q  = &Toggle(Lock9)
@@ -372,6 +452,9 @@ window firefox /firefox\.exe/ : custommap
 
 ### * gvim
 window gvim /gvim\.exe/ : custommap
+
+### * Visual Studio (for VsVim)
+#window visualstudio /devenv\.exe/ : custommap
 
 ### * Tales Weaver (to take SS with C-S)
 window talesweaver /InphaseNXD\.exe/ : custommap
