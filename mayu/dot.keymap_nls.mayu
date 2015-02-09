@@ -1,7 +1,37 @@
-# local version: 2.2d
-# You are recommended to take a symbol, 
-# "-DUSE104on109mix" on jp106 keyboard.
+# local version: 2.2g
+# You are recommended to take some symbols,
+#
+# [symbols]
+#  USE104on109mix    : 104 on jp106 keyboard (minimum definition from 104on109)
+#  SANDS             : SandS available
+#  SWAP_RIGHTSHIFT   : swap E0-RightShift to ReverseSolidus
+#  WORKAROUND104     : implement ”¼Šp/‘SŠp LeftBottom key(almost CTRL) on 104
+#
+#  HHKBpro           : mmm forgotten.
+#  HHKBproTypeS      : ”¼Šp/‘SŠp occupy a convenient position
+#
+#  <E0-–³•ÏŠ·ƒL[‚ÉŠÖ‚·‚é>
+#  THUMB_BS          : replace E0-–³•ÏŠ· into BackSpace
+#  MOD1              : implement MOD1 key
+#    MOD1_ONESHOT    : Mod1 on make, BackSpace on break
+#    NUM_CENTER      : num row dip to home
+#    NUM_ABOVE       : num row dip to qwerty
+#
+#  <RightAlt‚ÉŠÖ‚·‚é>
+#  RALT_WIN          : translate RightAlt(E0-0x38) to Windows
+#
+#  <mod0‚ÉŠÖ‚·‚é>
+#  MOD_0             : Mod0 on make, ToggleIME on break
+#    MOD_0_HENKAN    : if true •ÏŠ· translated to mod0, else LShift
+#    MOD_0_HIRAGANA  : if true ‚Ð‚ç‚ª‚È translated to mod0, else RAlt
+#
+# [keymaps]
+# . myGlobal   : default keymap
+#   . custommap  : further features
+#     . emacslike  : emacs's map to move cursor and partial to edit
+#       . emacsedit  : incompatible map with commonly-used software
 
+keymap myGlobal
 # include settings  {{{
 include "109.mayu"    # 109
 if ( USE104on109mix )
@@ -24,8 +54,20 @@ if ( USE104on109mix )
   def subst  S-*Semicolon       = $COLON
   def subst ~S-*Colon           = $APOSTROPHE
   def subst  S-*Colon           = $QUOTATION_MARK
-  def subst ~S-*ReverseSolidus  = $GRAVE_ACCENT
-  def subst  S-*ReverseSolidus  = $TILDE
+  if ( SWAP_RIGHTSHIFT ) # imitate PURE60 CHERRY MX
+    mod shift -= E0RightShift
+    def subst ~S-*E0RightShift = $GRAVE_ACCENT
+    def subst  S-*E0RightShift = $TILDE
+
+    mod shift += ReverseSolidus
+    key *ReverseSolidus	= *LeftShift
+  else
+    def subst ~S-*ReverseSolidus  = $GRAVE_ACCENT
+    def subst  S-*ReverseSolidus  = $TILDE
+
+    mod shift += E0RightShift
+    key *E0RightShift = *LeftShift
+  endif
 endif
 
 #}}}
@@ -48,8 +90,8 @@ endif
 
 #}}}
 
-keymap myGlobal
 #  basic setting    {{{
+def option delay-of !!! = 5
 
 #  Modifier:    {{{
 ## ctrl
@@ -73,50 +115,62 @@ else
       key R-*E0–³•ÏŠ· = &Ignore
       key M1-*IC-E0–³•ÏŠ· = *BackSpace
     else
-      key *E0–³•ÏŠ·= *BackSpace
-
-      def key ZH = E0-0x29
-      mod mod1 += ZH
-      #mod mod1 += !!ZH
-      #key R-*ZH = &Ignore
-      #key M1-*IC-ZH = *”¼Šp/‘SŠp
+      mod mod1 += E0–³•ÏŠ·
     endif
   else
-## win
     mod win    += E0–³•ÏŠ·
     key *E0–³•ÏŠ·= *LeftWindows
   endif
 endif
 
-mod alt      -= RightAlt
-mod win      += RightAlt
-key *RightAlt= *LeftWindows
+if ( RALT_WIN )
+ mod alt      -= RightAlt
+ mod win      += RightAlt
+ key *RightAlt= *LeftWindows
+endif
 
 ## alt
 #mod alt    += –³•ÏŠ·
 #key *–³•ÏŠ·= *LeftAlt
 
- mod mod0   += !!•ÏŠ·
- key R-*•ÏŠ·= &Ignore
- key M0-*IC-•ÏŠ·    = $ToggleIME  # •ÏŠ· needs to assign mod0
+if ( MOD_0 )
+  if ( MOD_0_HENKAN )
+    mod mod0 += !!•ÏŠ·
+    key R-*•ÏŠ· = &Ignore
+    key M0-*IC-•ÏŠ· = $ToggleIME  # •ÏŠ· needs to assign mod0
+  endif
+  if ( MOD_0_HIRAGANA )
+    mod mod0 += !!E0‚Ð‚ç‚ª‚È
+    key R-*E0‚Ð‚ç‚ª‚È = &Ignore
+    key M0-*IC-E0‚Ð‚ç‚ª‚È = $ToggleIME  # •ÏŠ· needs to assign mod0
+  endif
+endif
 
- mod alt    += E0‚Ð‚ç‚ª‚È
- key *E0‚Ð‚ç‚ª‚È  = *RightAlt
+if ( MOD_0_HENKAN )
+else
+  mod shift += •ÏŠ·
+  key *•ÏŠ· = *LeftShift
+endif
+if ( MOD_0_HIRAGANA )
+else
+  mod alt    += E0‚Ð‚ç‚ª‚È
+  key *E0‚Ð‚ç‚ª‚È  = *RightAlt
+  #key *E0‚Ð‚ç‚ª‚È = *Enter
+endif
+
+if ( SANDS )
+  mod shift    += !!Space
+  #mod shift    += !!!Space
+  #key R-*Space = &Ignore
+endif
+
+ key M1-*Tab = *Enter
+ key M1-*Space = *Enter
 
 if ( HHKBpro )
   # Happy Hacking Keyboard Lite 2 Setting: RightAlt when SW1 is on.
   def key RightAlt_lite2  = E0-0x38
   mod alt   += RightAlt_lite2
-endif
-
-## shift
- mod shift    += !!!Space
- #key R-*Space = &Ignore
-
-if ( ABOVE_WIN7 )
-  def key E0RightShift  = E0-0x36
-  mod shift += E0RightShift
-  key *E0RightShift = *LShift
 endif
 
 #}}}
@@ -133,9 +187,9 @@ else
 endif
 if ( HHKBproTypeS )
   key *E0”¼Šp/‘SŠp      = &SetImeStatus(off)
-else
-  def subst ~S-*E0”¼Šp/‘SŠp = $GRAVE_ACCENT
-  def subst S-*E0”¼Šp/‘SŠp  = $TILDE
+#else
+#  def subst ~S-*E0”¼Šp/‘SŠp = $GRAVE_ACCENT
+#  def subst S-*E0”¼Šp/‘SŠp  = $TILDE
 endif
 
 #}}}
@@ -449,6 +503,9 @@ window cyg_mintty /mintty\.exe/ : custommap
 ### * firefox
 window firefox /firefox\.exe/ : custommap
 #key C-G    = C-K     # focus search bar
+
+### * GoogleChrome
+window googlechrome /chrome\.exe/ : emacsedit
 
 ### * gvim
 window gvim /gvim\.exe/ : custommap
