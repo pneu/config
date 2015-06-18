@@ -623,8 +623,10 @@ vmap    ,   [Tag]
 
 "}}}
 "" Insert date {{{
-inoremap <silent> <special> <C-;>   <C-r>=strftime('%Y%m%dT%H%M%S')<CR>
-nnoremap <silent> <special> <C-;>   :<C-u>put! =strftime('%Y%m%dT%H%M%S')<CR>
+inoremap <silent> <special> <C-;>   <C-r>=strftime('%Y%m%d')<CR>
+nnoremap <silent> <special> <C-;>   :<C-u>put! =strftime('%Y%m%d')<CR>
+inoremap <silent> <special> <C-:>   <C-r>=strftime('%Y%m%dT%H%M%S')<CR>
+nnoremap <silent> <special> <C-:>   :<C-u>put! =strftime('%Y%m%dT%H%M%S')<CR>
 
 "}}}
 "" Toggle option number {{{
@@ -1020,6 +1022,26 @@ if exists(":Tabularize")
   "nnoremap <silent> [Tag]a: :Tabularize /:\zs<CR>
   "vnoremap <silent> [Tag]a: :Tabularize /:\zs<CR>
 endif
+
+"}}}
+"" AutoHighlightToggle {{{
+"See http://vim.wikia.com/wiki/Auto_highlight_current_word_when_idle
+nmap z/ <Plug>AutoHighlightToggle
+
+"}}}
+"" incsearch.vim {{{
+"See https://github.com/haya14busa/incsearch.vim
+nmap / <Plug>(incsearch-forward)
+nmap ? <Plug>(incsearch-backward)
+nmap g/ <Plug>(incsearch-stay)
+
+let g:incsearch#auto_nohlsearch = 1
+nmap n  <Plug>(incsearch-nohl-n)
+nmap N  <Plug>(incsearch-nohl-N)
+nmap *  <Plug>(incsearch-nohl-*)
+nmap #  <Plug>(incsearch-nohl-#)
+nmap g* <Plug>(incsearch-nohl-g*)
+nmap g# <Plug>(incsearch-nohl-g#)
 
 "}}}
 

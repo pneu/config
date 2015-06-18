@@ -28,8 +28,15 @@ set guioptions-=e
 
 " }}}
 " [Colorscheme] " {{{
-colorscheme candycode
+"colorscheme default
+"colorscheme candycode
 "colorscheme molokai
+colorscheme paintbox
+
+"set background=light
+"colorscheme solarized
+
+"colorscheme badwolf
 
 "" xterm16      " low contrast
 "colorscheme xterm16
@@ -63,8 +70,8 @@ if has("gui_running")
     "set guifont=さざなみゴシック:h11.5
     "set guifont=IPAゴシック:h10:cSHIFTJIS
     "}}}
-    "set guifont=MS_Gothic:h11
-    set guifont=MS_Mincho:h11
+    set guifont=MS_Gothic:h11
+    "set guifont=MS_Mincho:h11
   endif
 endif
 

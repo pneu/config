@@ -12,7 +12,7 @@ test -s ~/.alias && . ~/.alias || true
 #PATH=$PATH:$HOME/bin
 #PATH=$PATH:/usr/local/teTeX/bin
 ## should cons before current environment variable.
-PATH="$PATH:$HOME/bin"
+PATH="$HOME/bin:$PATH"
 PATH="/usr/local/teTeX/bin:$PATH"
 export PATH
 unset USERNAME
