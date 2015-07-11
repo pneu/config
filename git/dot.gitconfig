@@ -6,6 +6,7 @@
 	whitespace = trailing-space,space-before-tab
 	editor = gvim
 	autocrlf = false
+	#pager = nkf -W -w80 | LESSCHARSET=utf-8 less
 [push]
 	default = simple
 [color]
@@ -31,6 +32,7 @@
 	br = branch
 	co = checkout
 	df = diff
+	dfc = diff --cached
 	lg = log -p
 	l  = log --graph --decorate --pretty=oneline --abbrev-commit
 	la = log --graph --decorate --pretty=oneline --abbrev-commit --all

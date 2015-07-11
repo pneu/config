@@ -93,8 +93,8 @@ else
     def subst ~S-*RightSquareBracket = $REVERSE_SOLIDUS
     def subst S-*RightSquareBracket = $VERTICAL_LINE
     def subst ~S-*E0îºäp/ëSäp = $GRAVE_ACCENT
-    def subst S-*E0îºäp/ëSäp = $TILDE
-    def subst ~S-*CommercialAt = $LEFT_SQUARE_BRACKET
+    def subst S-~A-*E0îºäp/ëSäp = $TILDE
+    def subst ~S-~A-*CommercialAt = $LEFT_SQUARE_BRACKET
     def subst S-*CommercialAt = $LEFT_CURLY_BRACKET
     def subst ~S-*LeftSquareBracket = $RIGHT_SQUARE_BRACKET
     def subst S-*LeftSquareBracket = $RIGHT_CURLY_BRACKET
@@ -103,6 +103,7 @@ else
     def subst S-*Colon = $QUOTATION_MARK
     #def subst ~S-*ïœä∑ = LWindows
     def subst ~S-*ïœä∑ = *îºäp/ëSäp
+    def subst A-*E0îºäp/ëSäp = îºäp/ëSäp
 
     mod shift += E0RightShift
     key *E0RightShift = *LeftShift
@@ -134,10 +135,8 @@ def option delay-of !!! = 5
 
 #  Modifier:    {{{
 ## ctrl
-if ( USE104on109mix )
  mod ctrl     += E0âpêî
  key *E0âpêî  = *LeftControl
-endif
 
 #mod ctrl     += E0ñ≥ïœä∑
 #key *E0ñ≥ïœä∑= *LeftControl
@@ -677,6 +676,24 @@ window opera /opera\.exe/ : emacslike
 
 ### * Visual Studio
 window visualstudio /WDExpress\.exe/ : emacslike
+
+keymap2 devenv_M
+ key C-A = C-M C-A # Edit.CollapseAllOutlining
+ key C-X = C-M C-X # Edit.ExpandAllOutlining
+ key C-M = C-M C-M # Edit.ToggleOutliningExpansion
+ key C-O = C-M C-O # Edit.CollapsetoDefinitions
+ key C-L = C-M C-L # Edit.ToggleAllOutlining
+ key C-U = C-M C-U # Edit.StopHidingCurrent
+keymap2 devenv_K
+ key C-I = C-K C-I # Edit.QuickInfo
+ key C-D = C-K C-D # Edit.FormatDocument
+ key C-F = C-K C-F # Edit.FormatSelection
+ key C-C = C-K C-C # Edit.CommentSelection
+ key C-U = C-K C-U # Edit.UncommentSelection
+window devenv /devenv\.exe/ : emacslike
+ key C-J = &Default # Edit.ListMembers
+ key C-M = &Prefix(devenv_M)
+ key C-K = &Prefix(devenv_K)
 
 #}}}
 
