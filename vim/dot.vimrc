@@ -478,141 +478,6 @@ endif
 
 "}}}
 
-
-"" [ColorScheme/Highlight syntax]
-"" << NOTE >> {{{
-  "Not set ':syntax' in this section.
-
-"}}}
-"" colors(Colorscheme/Color limit) {{{
-if $TERM ==? 'xterm'
-  set t_Co=256
-    "+ your system must have 256 palette.
-  "colorscheme inkpot
-  colorscheme candycode
-    "+ your system must have 256 palette.
-elseif $TERM =~? 'screen.*'     " TODO: modify regex
-  set t_Co=256
-  "colorscheme candycode
-    "+ TODO: set colorscheme
-endif
-  "+ (See http://vim-users.jp/2009/08/hack64/)
-
-"}}}
-
-"" [Look and feel]
-"" Highlight syntax settings {{{
-syntax enable
-syntax on
-
-"}}}
-"" Appear blanks {{{
-"set list
-  "+ show visibly tab, end of line, wrap line...
-
-set listchars=tab:>.,eol:$,trail:_,precedes:<,extends:\
-"set listchars=tab:\ \ ,eol:$,trail:_,extends:\
-  "+ 'set listchars' is setting for 'set list'
-
-scriptencoding euc-jp
-highlight JpSpace cterm=underline ctermfg=Blue guifg=Blue
-au BufRead,BufNew * match JpSpace /｡｡/
-  "+ (See http://d.hatena.ne.jp/studio-m/20080117/1200552387)
-scriptencoding
-
-"}}}
-"" Indent options {{{
-filetype indent off
-set shiftwidth=2
-set noexpandtab
-set noshiftround
-set tabstop=2
-let &softtabstop = &tabstop
-set noautoindent
-set nocindent
-set nosmartindent
-set nosmarttab
-
-"}}}
-"" Indent options.2 (See 'filetype indent on') {{{
-  "+ See http://vim.g.hatena.ne.jp/ka-nacht/20081222/1229926763
-  "  Describe after 'filetype plugin indent on'.
-  "+ this settings move to 'after/'.
-augroup KillEvilIndentaion
-  autocmd!
-  autocmd FileType * setlocal formatoptions-=r
-    "+ don't continue comment line automatically
-  autocmd FileType * setlocal formatoptions-=o
-    "+ don't continue comment line automatically
-augroup END
-
-"}}}
-"" Indent options.3 {{{
-  "+ formatting lines by `gq' command
-set formatoptions+=mB   " See :help fo-table
-
-"}}}
-"" Behavior on folding block {{{
-set foldenable
-"set foldmethod=indent
-
-"}}}
-"" Appearance of the status line {{{
-set laststatus=2
-set ruler
-set showcmd
-set noshowmode
-set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%{&enc}/%{&fenc}/%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%cC,%l/%L\ [%{exists('w:locksw')?'L,':''}%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
-
-"}}}
-"" Highlight the current line {{{
-"augroup HighlightCurrentLine
-"  autocmd!
-"  autocmd WinEnter *  setlocal cursorline
-"  autocmd WinLeave *  setlocal nocursorline
-"augroup END
-
-"}}}
-"" Error format when compile C source {{{
-  "+ (See errormarker.vim)
-let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
-if has('unix')
-  set makeprg=LANGUAGE=C\ make
-elseif s:is_win()
-  set makeprg=make
-endif
-
-"}}}
-"" Highlight the remarkable {{{
-augroup RemarkableMarker_Exclaim
- autocmd!
- autocmd BufNewFile,BufRead *.{txt,todo,TODO}
-   \ syntax match Error /^\W\+!\ /he=e-1
-augroup END
-"highlight PlusRemark ctermbg=Blue guibg=Blue
-augroup RemarkableMarker_Plus
- autocmd!
- autocmd BufNewFile,BufRead *.{txt,todo,TODO}
-   \ syntax match DiffAdd /^\W\++\ /he=e-1
-"   \ syntax match PlusRemark /^\W\++\ /he=e-1
-augroup END
-"augroup LowPriorityMarker
-" autocmd!
-" autocmd BufNewFile,BufRead *.{txt,todo,TODO}
-"   \ syntax match Error /^\W\++\ .*$/
-"augroup END
-
-"}}}
-"" show relativenumber {{{
-augroup ShowNumberAuto
- autocmd!
- "autocmd BufEnter * call <SID>_F_SetRelativeNumber()
- autocmd InsertLeave * call <SID>_F_ToggleAbsRelNumber("rnu")
- autocmd InsertEnter * call <SID>_F_ToggleAbsRelNumber("nu")
-augroup END
-
-"}}}
-
 "" [keymap]
 "" The prefix key {{{
   "+ (See http://vim-users.jp/2009/08/hack-59/)
@@ -863,9 +728,57 @@ endif
 
 "}}}
 
-"" [plugin settings] (local-additions)
+"" [plugins] (local-additions)
+"" vundle {{{
+if executable("git") && !empty($HOME)
+  if s:is_win()
+    let s:bundlebase = expand("$HOME/vimfiles/bundle")
+  else
+    let s:bundlebase = expand("$HOME/.vim/bundle/vundle")
+  endif
+  if (empty(glob(s:bundlebase . "/vundle")))
+    if empty(glob(s:bundlebase))
+      call mkdir(s:bundlebase, "p") " directory including blank guaranteed
+    endif
+    call system("git clone git://github.com/gmarik/vundle.git "
+      \ . s:bundlebase . "/vundle")
+    let s:vundle_installation = 1
+  endif
+  execute "set rtp+=" . s:bundlebase . "/vundle/"
+  if exists("s:vundle_installation") && s:vundle_installation
+    "PluginInstall
+    unlet s:vundle_installation
+    echomsg "vundle installed"
+    quit
+  endif
+endif
+
+"}}}
+call vundle#begin(s:bundlebase)
+unlet s:bundlebase
+
+"Plugin 'bling/vim-airline' "{{{
+let g:airline_mode_map = {
+    \ '__' : '-',
+    \ 'n'  : 'n',
+    \ 'i'  : 'i',
+    \ 'R'  : 'R',
+    \ 'c'  : 'c',
+    \ 'v'  : 'v',
+    \ 'V'  : 'V',
+    \ '' : '^V',
+    \ 's'  : 's',
+    \ 'S'  : 'S',
+    \ '' : '^S',
+    \ }
+let g:airline_left_sep='>'
+let g:airline_right_sep='<'
+let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#tabline#left_sep = ' '
+"let g:airline#extensions#tabline#left_alt_sep = '|'
+"}}}
 "" manpageview.vim {{{
-let g:manpageview_options="-S 3p"
+"let g:manpageview_options="-S 3p"
 "nnoremap <silent>    K       :Man <cword>
 "let g:manpageview_winopen="reuse"
 "let g:manpageview_options=""
@@ -881,12 +794,12 @@ let g:manpageview_options="-S 3p"
 
 "}}}
 "" buftabs.vim {{{
-set laststatus=2        "always show status line
-let g:buftabs_only_basename=1  "show only basename (not './path/basename')
+"set laststatus=2        "always show status line
+"let g:buftabs_only_basename=1  "show only basename (not './path/basename')
 "let g:buftabs_in_statusline=0  "show buffer-tab in status line
 
 "}}}
-"" mru.vim {{{
+Plugin 'yegappan/mru' "{{{
 if has('unix')
   "let MRU_File='$HOME/.vim_mru_files   "by default
   let MRU_Max_Entries=20      "history size
@@ -911,18 +824,20 @@ endif
 "let g:howm_findprg = '/usr/bin/find'
 
 "}}}
-"" fuzzyfinder.vim {{{
+Plugin 'vim-scripts/L9' "{{{
+"}}}
+Plugin 'vim-scripts/FuzzyFinder' "{{{
 " The prefix key with fuzzyfinder.vim
 nnoremap      [FUFTag]  <Nop>
 nmap        <C-q>   [FUFTag]
 "let g:FuzzyFinderOptions.Base.key_open=<CR>      "default
 "let g:FuzzyFinderOptions.Base.key_open_split=<C-j>
-nnoremap <silent> [FUFTag]<C-n>   :FuzzyFinderBuffer<CR>
-nnoremap <silent> [FUFTag]<C-m>   :FuzzyFinderFile 
+nnoremap <silent> [FUFTag]<C-n>   :FufBuffer<CR>
+nnoremap <silent> [FUFTag]<C-m>   :FufFile 
         \ <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
-nnoremap <silent> [FUFTag]<C-j>   :FuzzyFinderMruFile<CR>
-nnoremap <silent> [FUFTag]<C-k>   :FuzzyFinderMruCmd<CR>
-nnoremap <silent> [FUFTag]<C-p>   :FuzzyFinderDir 
+"nnoremap <silent> [FUFTag]<C-j>   :FufMruFile<CR>
+"nnoremap <silent> [FUFTag]<C-k>   :FufMruCmd<CR>
+nnoremap <silent> [FUFTag]<C-p>   :FufDir 
         \ <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
 
 "}}}
@@ -934,10 +849,10 @@ let Tlist_File_Fold_Auto_Close = 1
 
 "}}}
 "" tagexplorer.vim {{{
-nnoremap <silent> <F11>  :TagExplorer<CR>
+"nnoremap <silent> <F11>  :TagExplorer<CR>
 
 "}}}
-"" tagbar.vim {{{
+Plugin 'majutsushi/tagbar' "{{{
 nnoremap <silent> <Leader>t  :TagbarToggle<CR>
 let g:tagbar_left = 1
 let g:tagbar_width = 40
@@ -950,11 +865,11 @@ let g:tagbar_sort = 0
 "set makeprg=LANGUAGE=C\ make
 
 "}}}
-"" qbuf.vim {{{
+Plugin 'vim-scripts/QuickBuf' "{{{
 let g:qb_hotkey = ",<LT>"
 
 "}}}
-"" AutoComplPop {{{
+Plugin 'othree/vim-autocomplpop' "{{{
 let g:acp_behaviorRubyOmniMethodLength = -1
 let g:acp_behaviorRubyOmniSymbolLength = -1
 
@@ -987,7 +902,7 @@ map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 "}}}
 "" vim-pathogen {{{
 "See http://www.vim.org/scripts/script.php?script_id=2332
-call pathogen#infect()
+"call pathogen#infect()
 
 "}}}
 "" cscope_quickfix {{{
@@ -1006,8 +921,7 @@ call pathogen#infect()
 " nmap <C-]>  :Cscope g <C-R>=expand("<cword>")<CR><CR>
 
 "}}}
-"" vim2hs {{{
-"See https://github.com/dag/vim2hs
+Plugin 'dag/vim2hs' "{{{
 let g:haskell_conceal = 0
 let g:haskell_conceal_wide = 0
 let g:haskell_conceal_enumerations = 0
@@ -1029,8 +943,11 @@ endif
 nmap z/ <Plug>AutoHighlightToggle
 
 "}}}
-"" incsearch.vim {{{
-"See https://github.com/haya14busa/incsearch.vim
+Plugin 't9md/vim-quickhl' "{{{
+"}}}
+Plugin 'easymotion/vim-easymotion' "{{{
+"}}}
+Plugin 'haya14busa/incsearch.vim' "{{{
 nmap / <Plug>(incsearch-forward)
 nmap ? <Plug>(incsearch-backward)
 nmap g/ <Plug>(incsearch-stay)
@@ -1042,6 +959,173 @@ nmap *  <Plug>(incsearch-nohl-*)
 nmap #  <Plug>(incsearch-nohl-#)
 nmap g* <Plug>(incsearch-nohl-g*)
 nmap g# <Plug>(incsearch-nohl-g#)
+
+"}}}
+Plugin 'rhysd/clever-f.vim' "{{{
+"}}}
+Plugin 'tpope/vim-surround' "{{{
+"}}}
+Plugin 'luochen1990/rainbow' "{{{
+let g:rainbow_active = 1
+"}}}
+Plugin 'ciaranm/inkpot' "{{{
+"}}}
+Plugin 'tomasr/molokai' "{{{
+"}}}
+Plugin 'altercation/vim-colors-solarized' "{{{
+"}}}
+Plugin 'w0ng/vim-hybrid' "{{{
+"}}}
+Plugin 'sjl/badwolf' "{{{
+"}}}
+Plugin 'nanotech/jellybeans.vim' "{{{
+"}}}
+Plugin 'antlypls/vim-colors-codeschool' "{{{
+"}}}
+Plugin 'gilgigilgil/anderson.vim' "{{{
+"}}}
+Plugin 'wellsjo/wellsokai.vim' "{{{
+"}}}
+Plugin 'dfxyz/CandyPaper.vim' "{{{
+"}}}
+Plugin 'vim-scripts/paintbox' "{{{
+"}}}
+Plugin 'Haron-Prime/Antares' "{{{
+"}}}
+call vundle#end()
+
+"" [ColorScheme/Highlight syntax]
+"" << NOTE >> {{{
+  "Not set ':syntax' in this section.
+
+"}}}
+"" colors(Colorscheme/Color limit) {{{
+if $TERM ==? 'xterm'
+  set t_Co=256
+    "+ your system must have 256 palette.
+  "colorscheme inkpot
+  colorscheme candycode
+    "+ your system must have 256 palette.
+elseif $TERM =~? 'screen.*'     " TODO: modify regex
+  set t_Co=256
+  "colorscheme candycode
+    "+ TODO: set colorscheme
+endif
+  "+ (See http://vim-users.jp/2009/08/hack64/)
+
+"}}}
+colorscheme zenburn
+
+"" [Look and feel]
+"" Highlight syntax settings {{{
+syntax enable
+syntax on
+
+"}}}
+"" Appear blanks {{{
+"set list
+  "+ show visibly tab, end of line, wrap line...
+
+set listchars=tab:>.,eol:$,trail:_,precedes:<,extends:\
+"set listchars=tab:\ \ ,eol:$,trail:_,extends:\
+  "+ 'set listchars' is setting for 'set list'
+
+scriptencoding euc-jp
+highlight JpSpace cterm=underline ctermfg=Blue guifg=Blue
+au BufRead,BufNew * match JpSpace /｡｡/
+  "+ (See http://d.hatena.ne.jp/studio-m/20080117/1200552387)
+scriptencoding
+
+"}}}
+"" Indent options {{{
+filetype indent off
+set shiftwidth=2
+set noexpandtab
+set noshiftround
+set tabstop=2
+let &softtabstop = &tabstop
+set noautoindent
+set nocindent
+set nosmartindent
+set nosmarttab
+
+"}}}
+"" Indent options.2 (See 'filetype indent on') {{{
+  "+ See http://vim.g.hatena.ne.jp/ka-nacht/20081222/1229926763
+  "  Describe after 'filetype plugin indent on'.
+  "+ this settings move to 'after/'.
+augroup KillEvilIndentaion
+  autocmd!
+  autocmd FileType * setlocal formatoptions-=r
+    "+ don't continue comment line automatically
+  autocmd FileType * setlocal formatoptions-=o
+    "+ don't continue comment line automatically
+augroup END
+
+"}}}
+"" Indent options.3 {{{
+  "+ formatting lines by `gq' command
+set formatoptions+=mB   " See :help fo-table
+
+"}}}
+"" Behavior on folding block {{{
+set foldenable
+"set foldmethod=indent
+
+"}}}
+"" Appearance of the status line {{{
+set laststatus=2
+set ruler
+set showcmd
+set noshowmode
+set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%{&enc}/%{&fenc}/%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%cC,%l/%L\ [%{exists('w:locksw')?'L,':''}%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
+
+"}}}
+"" Highlight the current line {{{
+"augroup HighlightCurrentLine
+"  autocmd!
+"  autocmd WinEnter *  setlocal cursorline
+"  autocmd WinLeave *  setlocal nocursorline
+"augroup END
+
+"}}}
+"" Error format when compile C source {{{
+  "+ (See errormarker.vim)
+let &errorformat="%f:%l:%c: %t%*[^:]:%m,%f:%l: %t%*[^:]:%m," . &errorformat
+if has('unix')
+  set makeprg=LANGUAGE=C\ make
+elseif s:is_win()
+  set makeprg=make
+endif
+
+"}}}
+"" Highlight the remarkable {{{
+augroup RemarkableMarker_Exclaim
+ autocmd!
+ autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+   \ syntax match Error /^\W\+!\ /he=e-1
+augroup END
+"highlight PlusRemark ctermbg=Blue guibg=Blue
+augroup RemarkableMarker_Plus
+ autocmd!
+ autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+   \ syntax match DiffAdd /^\W\++\ /he=e-1
+"   \ syntax match PlusRemark /^\W\++\ /he=e-1
+augroup END
+"augroup LowPriorityMarker
+" autocmd!
+" autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+"   \ syntax match Error /^\W\++\ .*$/
+"augroup END
+
+"}}}
+"" show relativenumber {{{
+augroup ShowNumberAuto
+ autocmd!
+ "autocmd BufEnter * call <SID>_F_SetRelativeNumber()
+ autocmd InsertLeave * call <SID>_F_ToggleAbsRelNumber("rnu")
+ autocmd InsertEnter * call <SID>_F_ToggleAbsRelNumber("nu")
+augroup END
 
 "}}}
 

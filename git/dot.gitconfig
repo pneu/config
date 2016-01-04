@@ -6,7 +6,7 @@
 	whitespace = trailing-space,space-before-tab
 	editor = gvim
 	autocrlf = false
-	#pager = nkf -W -w80 | LESSCHARSET=utf-8 less
+	pager = nkf -W -w80 | LESSCHARSET=utf-8 less
 [push]
 	default = simple
 [color]
@@ -43,9 +43,6 @@
 	unignore = update-index --no-assume-unchaged
 	ignored = !git ls-files -v | grep "^[a-z]"
 	#diffall = !sh diffall.sh
-[i18n]
-	commitEncoding = sjis
-	logOutputEncoding = sjis
 [diff]
 	#guitool = gvimdiff
 	guitool = winmerge

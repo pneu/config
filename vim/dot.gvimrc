@@ -4,6 +4,7 @@
 set hlsearch
 set visualbell
 set t_vb=
+set columns=88 " enc/ff shows up in airline status
 
 " }}}
 " [IME] " {{{
@@ -21,7 +22,7 @@ set guioptions-=t
 set guioptions-=T
 set guioptions-=r
 set guioptions-=R
-set guioptions-=l
+set guioptions+=l
 set guioptions-=L
 set guioptions+=c
 set guioptions-=e
@@ -31,7 +32,8 @@ set guioptions-=e
 "colorscheme default
 "colorscheme candycode
 "colorscheme molokai
-colorscheme paintbox
+"colorscheme paintbox
+colorscheme antares
 
 "set background=light
 "colorscheme solarized
@@ -70,8 +72,9 @@ if has("gui_running")
     "set guifont=さざなみゴシック:h11.5
     "set guifont=IPAゴシック:h10:cSHIFTJIS
     "}}}
-    set guifont=MS_Gothic:h11
+    "set guifont=MS_Gothic:h11
     "set guifont=MS_Mincho:h11
+    set guifont=Myrica_M:h12:cSHIFTJIS
   endif
 endif
 
