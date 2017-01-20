@@ -22,10 +22,12 @@
 " 
 " }}}
 
+language C
+set encoding=utf-8
 " read custom script
 runtime custom/vimrc
 
-filetype plugin on
+filetype off
   "+ set default values (note that order of reading plugin)
   "+ :help :filetype-overview
   "  Note: my autocmd, indent setttings etc. had better describe
@@ -347,6 +349,10 @@ set modeline
 set modelines=5
 
 "}}}
+"" backup "{{{
+set backup
+set backupdir=$HOME/var/vim
+"}}}
 "" Restore/Recovery/Backup or Session"{{{
 set viminfo='100,<50,s10,h
 "set viminfo='100,<50,s10,h,%,/50,c,f0,@50,:50,%
@@ -367,6 +373,11 @@ set wildmode=longest:full
 set hidden
 set autoread
 
+"}}}
+"" Number {{{
+set numberwidth=5
+"set number
+set relativenumber
 "}}}
 "" Window behavior"{{{
 set splitbelow
@@ -426,6 +437,10 @@ endif
 "}}}
 "" vimdiff settings"{{{
 set diffopt+=vertical
+
+"}}}
+"" <EOL> behaivior"{{{
+set nofixendofline
 
 "}}}
 
@@ -730,12 +745,12 @@ endif
 
 "" [plugins] (local-additions)
 "" vundle {{{
-if executable("git") && !empty($HOME)
-  if s:is_win()
-    let s:bundlebase = expand("$HOME/vimfiles/bundle")
-  else
-    let s:bundlebase = expand("$HOME/.vim/bundle/vundle")
-  endif
+if has('unix')
+  let s:bundlebase = expand("$HOME/.vim/bundle")
+else
+  let s:bundlebase = expand("$HOME/vimfiles/bundle")
+endif
+if executable("git") && exists("s:bundlebase")
   if (empty(glob(s:bundlebase . "/vundle")))
     if empty(glob(s:bundlebase))
       call mkdir(s:bundlebase, "p") " directory including blank guaranteed
@@ -744,7 +759,6 @@ if executable("git") && !empty($HOME)
       \ . s:bundlebase . "/vundle")
     let s:vundle_installation = 1
   endif
-  execute "set rtp+=" . s:bundlebase . "/vundle/"
   if exists("s:vundle_installation") && s:vundle_installation
     "PluginInstall
     unlet s:vundle_installation
@@ -754,6 +768,8 @@ if executable("git") && !empty($HOME)
 endif
 
 "}}}
+if exists("s:bundlebase")
+execute "set rtp+=" . s:bundlebase . "/vundle/"
 call vundle#begin(s:bundlebase)
 unlet s:bundlebase
 
@@ -870,6 +886,7 @@ let g:qb_hotkey = ",<LT>"
 
 "}}}
 Plugin 'othree/vim-autocomplpop' "{{{
+let g:acp_enableAtStartup = 0
 let g:acp_behaviorRubyOmniMethodLength = -1
 let g:acp_behaviorRubyOmniSymbolLength = -1
 
@@ -877,17 +894,17 @@ let g:acp_behaviorRubyOmniSymbolLength = -1
 "" OmniCppComplete {{{
 "See http://www.vim.org/scripts/script.php?script_id=1520
 "See http://vim.wikia.com/wiki/C++_code_completion for below settings
-let OmniCpp_NamespaceSearch = 1
-let OmniCpp_GlobalScopeSearch = 1
-let OmniCpp_ShowAccess = 1
-let OmniCpp_ShowPrototypeInAbbr = 1 " show function parameters
-let OmniCpp_MayCompleteDot = 1 " autocomplete after .
-let OmniCpp_MayCompleteArrow = 1 " autocomplete after ->
-let OmniCpp_MayCompleteScope = 1 " autocomplete after ::
-let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
-" automatically open and close the popup menu / preview window
-au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
-set completeopt=menuone,menu,longest,preview
+"" let OmniCpp_NamespaceSearch = 1
+"" let OmniCpp_GlobalScopeSearch = 1
+"" let OmniCpp_ShowAccess = 1
+"" let OmniCpp_ShowPrototypeInAbbr = 1 " show function parameters
+"" let OmniCpp_MayCompleteDot = 1 " autocomplete after .
+"" let OmniCpp_MayCompleteArrow = 1 " autocomplete after ->
+"" let OmniCpp_MayCompleteScope = 1 " autocomplete after ::
+"" let OmniCpp_DefaultNamespaces = ["std", "_GLIBCXX_STD"]
+"" " automatically open and close the popup menu / preview window
+"" au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
+"" set completeopt=menuone,menu,longest,preview
 
 "}}}
 "" tags for std c++ {{{
@@ -948,20 +965,25 @@ Plugin 't9md/vim-quickhl' "{{{
 Plugin 'easymotion/vim-easymotion' "{{{
 "}}}
 Plugin 'haya14busa/incsearch.vim' "{{{
-nmap / <Plug>(incsearch-forward)
-nmap ? <Plug>(incsearch-backward)
-nmap g/ <Plug>(incsearch-stay)
+if exists("g:incsearch#auto_nohlsearch")
+  nmap / <Plug>(incsearch-forward)
+  nmap ? <Plug>(incsearch-backward)
+  nmap g/ <Plug>(incsearch-stay)
 
-let g:incsearch#auto_nohlsearch = 1
-nmap n  <Plug>(incsearch-nohl-n)
-nmap N  <Plug>(incsearch-nohl-N)
-nmap *  <Plug>(incsearch-nohl-*)
-nmap #  <Plug>(incsearch-nohl-#)
-nmap g* <Plug>(incsearch-nohl-g*)
-nmap g# <Plug>(incsearch-nohl-g#)
+  let g:incsearch#auto_nohlsearch = 1
+  nmap n  <Plug>(incsearch-nohl-n)
+  nmap N  <Plug>(incsearch-nohl-N)
+  nmap *  <Plug>(incsearch-nohl-*)
+  nmap #  <Plug>(incsearch-nohl-#)
+  nmap g* <Plug>(incsearch-nohl-g*)
+  nmap g# <Plug>(incsearch-nohl-g#)
+endif
 
 "}}}
 Plugin 'rhysd/clever-f.vim' "{{{
+let g:clever_f_across_no_line = 1
+"let g:clever_f_smart_case = 1
+let g:clever_f_ignore_case = 0
 "}}}
 Plugin 'tpope/vim-surround' "{{{
 "}}}
@@ -992,7 +1014,19 @@ Plugin 'vim-scripts/paintbox' "{{{
 "}}}
 Plugin 'Haron-Prime/Antares' "{{{
 "}}}
+Plugin 'kannokanno/previm' "{{{
+"}}}
+Plugin 'tyru/open-browser.vim' "{{{
+"}}}
+Plugin 'vim-scripts/BlockDiff' "{{{
+"}}}
+Plugin 'rhysd/vim-color-spring-night' "{{{
+"}}}
+Plugin 'tpope/vim-fugitive' "{{{
+"}}}
 call vundle#end()
+endif
+filetype plugin indent on
 
 "" [ColorScheme/Highlight syntax]
 "" << NOTE >> {{{
@@ -1038,7 +1072,6 @@ scriptencoding
 
 "}}}
 "" Indent options {{{
-filetype indent off
 set shiftwidth=2
 set noexpandtab
 set noshiftround
@@ -1048,6 +1081,9 @@ set noautoindent
 set nocindent
 set nosmartindent
 set nosmarttab
+if v:version >= 800
+  set breakindent
+endif
 
 "}}}
 "" Indent options.2 (See 'filetype indent on') {{{
@@ -1125,6 +1161,15 @@ augroup ShowNumberAuto
  "autocmd BufEnter * call <SID>_F_SetRelativeNumber()
  autocmd InsertLeave * call <SID>_F_ToggleAbsRelNumber("rnu")
  autocmd InsertEnter * call <SID>_F_ToggleAbsRelNumber("nu")
+augroup END
+
+"}}}
+"" xml indentation {{{
+augroup XmlIndentation
+ autocmd!
+ "autocmd FileType xml setlocal foldminlines=1
+"let g:xml_syntax_folding = 1
+ autocmd FileType xml setlocal foldmethod=syntax foldlevel=2
 augroup END
 
 "}}}

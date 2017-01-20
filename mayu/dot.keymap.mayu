@@ -1,4 +1,4 @@
-# local version: 2.3
+# local version: 2.4
 # You are recommended to take some symbols,
 #
 # [symbols]
@@ -12,12 +12,14 @@
 #  HHKBpro           : mmm forgotten.
 #  HHKBproTypeS      : 半角/全角 occupy a convenient position
 #
-#  <E0-無変換キーに関する>
-#  THUMB_BS          : replace E0-無変換 into BackSpace
+#  <E0無変換キーに関する>
+#  THUMB_BS          : replace E0無変換 into BackSpace
 #  MOD1              : implement MOD1 key
 #    MOD1_ONESHOT    : Mod1 on make, BackSpace on break
 #    NUM_CENTER      : num row dip to home
 #    NUM_ABOVE       : num row dip to qwerty
+#  THUMB_CTRL        : replace E0無変換 into Ctrl
+#  THUMB_CTRL_ONESHOT: Ctrl on make, BackSpace on break
 #
 #  <RightAltに関する>
 #  RALT_WIN          : translate RightAlt(E0-0x38) to Windows
@@ -26,6 +28,12 @@
 #  MOD_0             : Mod0 on make, ToggleIME on break
 #    MOD_0_HENKAN    : if true 変換 translated to mod0, else LShift
 #    MOD_0_HIRAGANA  : if true ひらがな translated to mod0, else RAlt
+#
+#  <全角/半角に関する>
+#  MOD_2             : bind to Mod2
+#
+#  <ひらがなキーに関する>
+#  KANA_TO_CTRL      : bind ひらがな to Ctrl
 #
 # [keymaps]
 # . myGlobal   : default keymap
@@ -37,7 +45,7 @@ keymap myGlobal
 # include settings  {{{
 if ( USE104on109mix )
   include "109.mayu"    # 109
-  key ~C-~M-~S-*NL-*CL-*SL-*KL-~IL-~IC-*MAX-*MIN-*MMAX-*MMIN-*T-*TS- = # IL is off
+  #key ~C-~M-~S-*NL-*CL-*SL-*KL-~IL-~IC-*MAX-*MIN-*MMAX-*MMIN-*T-*TS- = # IL is off
 else
   if ( USE104onJPenv )
     #include "104onJPenv.mayu" #LL-Hookだと無理
@@ -92,8 +100,8 @@ else
     def subst S-*CircumflexAccent = $PLUS_SIGN
     def subst ~S-*RightSquareBracket = $REVERSE_SOLIDUS
     def subst S-*RightSquareBracket = $VERTICAL_LINE
-    def subst ~S-*E0半角/全角 = $GRAVE_ACCENT
-    def subst S-~A-*E0半角/全角 = $TILDE
+    def subst ~S-*半角/全角 = $GRAVE_ACCENT
+    def subst S-~A-*半角/全角 = $TILDE
     def subst ~S-~A-*CommercialAt = $LEFT_SQUARE_BRACKET
     def subst S-*CommercialAt = $LEFT_CURLY_BRACKET
     def subst ~S-*LeftSquareBracket = $RIGHT_SQUARE_BRACKET
@@ -103,7 +111,7 @@ else
     def subst S-*Colon = $QUOTATION_MARK
     #def subst ~S-*変換 = LWindows
     def subst ~S-*変換 = *半角/全角
-    def subst A-*E0半角/全角 = 半角/全角
+    def subst A-*半角/全角 = 半角/全角
 
     mod shift += E0RightShift
     key *E0RightShift = *LeftShift
@@ -138,30 +146,51 @@ def option delay-of !!! = 5
  mod ctrl     += E0英数
  key *E0英数  = *LeftControl
 
-#mod ctrl     += E0無変換
-#key *E0無変換= *LeftControl
+if ( KILL_CTRL )
+  mod ctrl    -= LeftControl
+endif
+
+#mod ctrl += !!A
+#key R-*A = &Ignore
+#key C-*IL-*IC-*A = *A
 
 if ( USE104on109mix )
   if ( WORKAROUND104 )
     mod ctrl    -= LeftControl
     key *LeftControl = *半角/全角
   endif
+  if ( MOD_2 )
+    #mod mod2 += !!半角/全角
+    #key R-*半角/全角 = &Ignore
+    #key M2-*S = ScrollLock
+  endif
   
   if ( THUMB_BS )
-    key *E0無変換= *BackSpace
+    key *無変換= *BackSpace
   else
     if ( MOD1 )
       if ( MOD1_ONESHOT )
-        mod mod1 += !!E0無変換
-        key R-*E0無変換 = &Ignore
-        key M1-*IL-*IC-E0無変換 = *BackSpace
+        mod mod1 += !!無変換
+        key R-*無変換 = &Ignore
+        key M1-*IL-*IC-無変換 = *BackSpace
       else
-        mod mod1 += E0無変換
-        key R-*E0無変換 = &Ignore
+        mod mod1 += 無変換
+        key R-*無変換 = &Ignore
       endif
     else
-      mod win    += E0無変換
-      key *E0無変換= *LeftWindows
+      if ( THUMB_CTRL )
+        if ( THUMB_CTRL_ONESHOT )
+          mod ctrl += !!無変換
+          key R-*無変換 = &Ignore
+          key C-*IL-*IC-無変換 = *BackSpace
+        else
+          mod ctrl += 無変換
+          key *無変換= *LeftControl
+        endif
+      else
+        mod win    += 無変換
+        key *無変換= *LeftWindows
+      endif
     endif
   endif
 endif
@@ -199,9 +228,18 @@ if ( USE104on109mix )
   endif
   if ( MOD_0_HIRAGANA )
   else
-    mod alt    += E0ひらがな
-    key *E0ひらがな  = *RightAlt
-    #key *E0ひらがな = *Enter
+    if ( KANA_TO_CTRL )
+      mod ctrl += E0ひらがな
+      key *E0ひらがな = *RightControl
+    else
+      if ( KANA_TO_BS )
+        key *E0ひらがな= *BackSpace
+      else
+        mod alt    += E0ひらがな
+        key *E0ひらがな  = *RightAlt
+        #key *E0ひらがな = *Enter
+      endif
+    endif
   endif
 endif
 
@@ -236,17 +274,17 @@ if ( USE104on109mix )
     # def subst *半角/全角  = *Esc
   endif
   if ( HHKBproTypeS )
-    key *E0半角/全角      = &SetImeStatus(off)
+    # key *半角/全角      = &SetImeStatus(off)
   #else
-  #  def subst ~S-*E0半角/全角 = $GRAVE_ACCENT
-  #  def subst S-*E0半角/全角  = $TILDE
+  #  def subst ~S-*半角/全角 = $GRAVE_ACCENT
+  #  def subst S-*半角/全角  = $TILDE
   endif
 endif
 
 #}}}
 #  Other:     {{{
 if ( USE104on109mix )
-  if ( MOD1 )
+  if ( MOD1 ) 
     if ( NUM_CENTER )
       def subst M1-~S-*A = *_1
       def subst M1-S-*A = $EXCLAMATION_MARK
@@ -320,16 +358,27 @@ endif
 #  Console Window   {{{
 # * [refered to default.mayu]
 #
- key S-A-A  = &WindowClingToLeft  #ウィンドウを左に寄せる
- key S-A-E  = &WindowClingToRight #ウィンドウを右に寄せる
- key S-A-P  = &WindowClingToTop #ウィンドウを上に寄せる
- key S-A-N  = &WindowClingToBottom  #ウィンドウを下に寄せる
- key S-A-F  = &WindowClingToTop #ウィンドウを上に寄せる
- key S-A-C  = &WindowClingToBottom  #ウィンドウを下に寄せる
- key S-A-Left = &WindowMove(-16, 0) #ウィンドウの移動
- key S-A-Right= &WindowMove(16, 0)  # 〃
- key S-A-Up   = &WindowMove(0, -16) # 〃
- key S-A-Down = &WindowMove(0, 16)  # 〃
+ key ~M0-S-A-A  = &WindowClingToLeft  #ウィンドウを左に寄せる
+ key M0-A  = &WindowClingToLeft
+ key ~M0-S-A-E  = &WindowClingToRight #ウィンドウを右に寄せる
+ #key M0-E  = &WindowClingToRight
+ key M0-W  = &WindowClingToRight
+ key ~M0-S-A-P  = &WindowClingToTop #ウィンドウを上に寄せる
+ key M0-P  = &WindowClingToTop
+ key ~M0-S-A-N  = &WindowClingToBottom  #ウィンドウを下に寄せる
+ key M0-N  = &WindowClingToBottom
+ key ~M0-S-A-F  = &WindowClingToTop #ウィンドウを上に寄せる
+ key M0-F  = &WindowClingToTop
+ key ~M0-S-A-C  = &WindowClingToBottom  #ウィンドウを下に寄せる
+ key M0-C  = &WindowClingToBottom
+ key ~M0-S-A-Left = &WindowMove(-16, 0) #ウィンドウの移動
+ key M0-Left = &WindowMove(-16, 0)
+ key ~M0-S-A-Right= &WindowMove(16, 0)  # 〃
+ key M0-Right= &WindowMove(16, 0)
+ key ~M0-S-A-Up   = &WindowMove(0, -16) # 〃
+ key M0-Up   = &WindowMove(0, -16)
+ key ~M0-S-A-Down = &WindowMove(0, 16)  # 〃
+ key M0-Down = &WindowMove(0, 16)
  key ~M0-C-A-S-L  = &WindowLower    #ウィンドウを一番下へ
  key ~M0-C-A-S-R  = &WindowRaise    #ウィンドウを一番上へ
  key ~M0-C-A-S-H  = &WindowHMaximize  # ウィンドウを横方向に最大化
@@ -356,6 +405,9 @@ endif
  key M0-I   = A-Right
  key M0-O   = A-Left
 
+#key M0-*L = *PageUp
+#key M0-*Period = *PageDown
+
 #}}}
 #  resize window      {{{
 
@@ -376,10 +428,20 @@ endif
 #key M0-S-A-K   = &MouseMove(0, -160)
 #key M0-S-A-H   = &MouseMove(-160, 0)
 #key M0-S-A-L   = &MouseMove(160, 0)
+ key M0-*Comma = &VK(D-LButton) &Sync &VK(U-LButton)
+ key M0-*Period = &VK(D-RButton) &Sync &VK(U-RButton)
+ key M0-*M = &VK(D-MButton) &Sync &VK(U-MButton)
+ key M0-*M = &VK(D-MButton) &Sync &VK(U-MButton)
+ key M0-S-E = &MouseMove(0, -16)
+ key M0-S-D = &MouseMove(0, 16)
+ key M0-S-S = &MouseMove(-16, 0)
+ key M0-S-F = &MouseMove(16, 0)
 
 #}}}
-#  Mouse Emulate    {{{
- key C-*IC-OpenBracket  = Esc
+#  Misc.    {{{
+ key C-~S-~A-*OpenBracket  = Esc
+#key C-*IC-OpenBracket  = Esc
+ key M0-z  = S-A-z
 
 #}}}
 
@@ -412,94 +474,97 @@ keymap custommap : myGlobal
  #my documents
  #key M0-E  = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,::{450D8FBA-AD25-11D0-98A8-0800361B1103}", , ShowNormal)
  #key M0-E  = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,%HOME%", , ShowNormal)
- key M0-E = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,C:\Users\pneu", , ShowNormal)
+ key M0-E = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,::{59031a47-3f72-44a7-89c5-5595fe6b30ee}", , ShowNormal) # User Folder
  #open context menu
  key M0-S-Space = Apps
  key M0-r = F2
+ key M0-s = ScrollLock
+ key M0-*p = *PrintScreen
+ key M0-n = NumLock
 
 #key C-*IC-S-Space  = $ToggleIME  # prefix S added because of SANDS
 
 if ( USE104on109mix )
-  if ( M_TYPE )
-    key IL-*IC- =
-  
-    key Q = Q
-    key W = L
-    key E = J
-    key R = F
-    key T = D H I
-    key Y = M
-    key U = Y
-    key I = R
-    key O = W
-    key P = P
-    key A = E
-    key S = U
-    key D = I
-    key F = A
-    key G = O
-    key H = K
-    key J = S
-    key K = T
-    key L = N
-    key Semicolon = H
-    key Z = E I
-    key X = U U
-    key C = U I
-    key V = A I
-    key B = O U
-    key N = G
-    key M = Z
-    key Comma = D
-    key FullStop = Comma
-    key Solidus = B
-  
-    # 母音シフト
-    key M0-Q = E K I
-    key M0-W = U K U
-    key M0-E = I K U
-    key M0-R = A K U
-    key M0-T = O K U
-    key M0-A = E N N
-    key M0-S = U N N
-    key M0-D = I N N
-    key M0-F = A N N
-    key M0-G = O N N
-    key M0-Z = E T U
-    key M0-X = U T U
-    key M0-C = I T U
-    key M0-V = A T U
-    key M0-B = O T U
-  
-    key M1-X = X
-    key M1-C = C
-    key M1-V = V
-  
-    # 子音シフト
-    key M1-Y = M Y
-    key M1-U = X T U
-    key M1-I = R Y
-    key M1-O = N N
-    key M1-P = P Y
-    key M1-H = K Y
-    key M1-J = S Y
-    key M1-K = T Y
-    key M1-L = N Y
-    key M1-Semicolon = H Y
-    key M1-N = G Y
-    key M1-M = Z Y
-    key M1-Comma = D Y
-    key M1-FullStop = FullStop
-    key M1-Solidus = B Y
-  
-    key M0-Semicolon = Semicolon
-    key M0-S-Semicolon = Colon
-    key M0-Solidus = Solidus
-    key M0-S-Solidus = S-Solidus
-  
-    # restore default modifier
-    key ~C-~M-~S-*NL-*CL-*SL-*KL-*IL-~IC-*MAX-*MIN-*MMAX-*MMIN-*T-*TS- =
-  endif
+# if ( M_TYPE )
+#   key IL-*IC- =
+# 
+#   key Q = Q
+#   key W = L
+#   key E = J
+#   key R = F
+#   key T = D H I
+#   key Y = M
+#   key U = Y
+#   key I = R
+#   key O = W
+#   key P = P
+#   key A = E
+#   key S = U
+#   key D = I
+#   key F = A
+#   key G = O
+#   key H = K
+#   key J = S
+#   key K = T
+#   key L = N
+#   key Semicolon = H
+#   key Z = E I
+#   key X = U U
+#   key C = U I
+#   key V = A I
+#   key B = O U
+#   key N = G
+#   key M = Z
+#   key Comma = D
+#   key FullStop = Comma
+#   key Solidus = B
+# 
+#   # 母音シフト
+#   key M0-Q = E K I
+#   key M0-W = U K U
+#   key M0-E = I K U
+#   key M0-R = A K U
+#   key M0-T = O K U
+#   key M0-A = E N N
+#   key M0-S = U N N
+#   key M0-D = I N N
+#   key M0-F = A N N
+#   key M0-G = O N N
+#   key M0-Z = E T U
+#   key M0-X = U T U
+#   key M0-C = I T U
+#   key M0-V = A T U
+#   key M0-B = O T U
+# 
+#   key M1-X = X
+#   key M1-C = C
+#   key M1-V = V
+# 
+#   # 子音シフト
+#   key M1-Y = M Y
+#   key M1-U = X T U
+#   key M1-I = R Y
+#   key M1-O = N N
+#   key M1-P = P Y
+#   key M1-H = K Y
+#   key M1-J = S Y
+#   key M1-K = T Y
+#   key M1-L = N Y
+#   key M1-Semicolon = H Y
+#   key M1-N = G Y
+#   key M1-M = Z Y
+#   key M1-Comma = D Y
+#   key M1-FullStop = FullStop
+#   key M1-Solidus = B Y
+# 
+#   key M0-Semicolon = Semicolon
+#   key M0-S-Semicolon = Colon
+#   key M0-Solidus = Solidus
+#   key M0-S-Solidus = S-Solidus
+# 
+#   # restore default modifier
+#   key ~C-~M-~S-*NL-*CL-*SL-*KL-*IL-~IC-*MAX-*MIN-*MMAX-*MMIN-*T-*TS- =
+# endif
 endif
 
 #}}}
@@ -664,6 +729,9 @@ window puttyjp /puttyjp\.exe/ : custommap
 ### * MINGW32(MSYS)
 window mingw /rxvt\.exe/ : custommap
 
+### * ConEmu
+window conemu /ConEmu64\.exe/ : custommap
+
 ### * RealVNC
 window realvnc /vncviewer\.exe/ : myGlobal
 
@@ -675,8 +743,6 @@ window opera /opera\.exe/ : emacslike
 #window sylera /sylera\.exe/ : emacslike
 
 ### * Visual Studio
-window visualstudio /WDExpress\.exe/ : emacslike
-
 keymap2 devenv_M
  key C-A = C-M C-A # Edit.CollapseAllOutlining
  key C-X = C-M C-X # Edit.ExpandAllOutlining
@@ -684,16 +750,25 @@ keymap2 devenv_M
  key C-O = C-M C-O # Edit.CollapsetoDefinitions
  key C-L = C-M C-L # Edit.ToggleAllOutlining
  key C-U = C-M C-U # Edit.StopHidingCurrent
+ key O = C-M O # アウトライン-定義に折りたたむ
 keymap2 devenv_K
  key C-I = C-K C-I # Edit.QuickInfo
  key C-D = C-K C-D # Edit.FormatDocument
  key C-F = C-K C-F # Edit.FormatSelection
  key C-C = C-K C-C # Edit.CommentSelection
  key C-U = C-K C-U # Edit.UncommentSelection
+ key C-K = C-K C-K # 編集.EOLまで削除
+
 window devenv /devenv\.exe/ : emacslike
  key C-J = &Default # Edit.ListMembers
  key C-M = &Prefix(devenv_M)
  key C-K = &Prefix(devenv_K)
+
+window visualstudio /WDExpress\.exe/ : emacslike
+ key C-J = &Default # Edit.ListMembers
+ key C-M = &Prefix(devenv_M)
+ key C-K = &Prefix(devenv_K)
+#key C-Semicolon = &Prefix(devenv_K)
 
 #}}}
 
