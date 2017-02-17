@@ -2,14 +2,46 @@
 	email = pneumaster@gmail.com
 	name = pneu
 [core]
+	quotePath = false
+	#excludesfile = c:/path/to/.gitignore
 	#whitespace = trailing-space,fix,indent-with-non-tab,cr-at-eol
 	whitespace = trailing-space,space-before-tab
 	editor = gvim
 	autocrlf = false
 	#pager = nkf -W -w80 | LESSCHARSET=utf-8 less
-[push]
-	default = simple
+	pager = c:/Users/path/to/Git/bin/diff-highlight | less -x 4 -q -R -X -F
+	preloadIndex = true
+	fscache = true
+[alias]
+	st = status --short --branch
+	ci = commit -q
+	br = branch
+	co = checkout
+	cp = cherry-pick
+	df = diff
+	dfc = diff --cached
+	lg = log -p
+	l = log --graph --decorate --pretty=oneline --abbrev-commit
+	la = log --graph --decorate --pretty=oneline --abbrev-commit --all --notes
+	ls = ls-files
+	lh = log --format='%H' --reverse
+	ignore = update-index --skip-worktree
+	unignore = update-index --no-skip-worktree
+	ignore2 = update-index --assume-unchanged
+	unignore2 = update-index --no-assume-unchanged
+	ignored = !git ls-files -v | grep '^[a-zS]'
+	#diffall = !sh diffall.sh
+	last-df = diff --name-status -M @^!
+	last-change = diff --name-status -M -C -C @^!
+	today-change = diff --name-status -M -C -C @{yesterday}..HEAD
+	today-changelog = log --name-status -M -C -C @{yesterday}..HEAD
+	wipe = clean -e .hg/ -e .hgignore -dx
 [color]
+	branch = auto
+	diff = auto
+	grep = auto
+	status = auto
+	showbranch = auto
 	ui = auto
 [color "branch"]
 	current = yellow reverse
@@ -17,38 +49,43 @@
 	remote = green
 [color "diff"]
 	meta = yellow bold
-	#frag = magenta bold
+	frag = magenta bold
 	frag = cyan bold
-	#old = red bold
-	#new = green bold
-	whitespace = red reverse
 [color "status"]
 	added = yellow
 	changed = green
-	untracked = cyan dim
-[alias]
-	st = status --short --branch
-	ci = commit -q
-	br = branch
-	co = checkout
-	df = diff
-	dfc = diff --cached
-	lg = log -p
-	l  = log --graph --decorate --pretty=oneline --abbrev-commit
-	la = log --graph --decorate --pretty=oneline --abbrev-commit --all
-	ls = ls-files
-	ignore = update-index --skip-worktree
-	unignore = update-index --no-skip-worktree
-	ignore = update-index --assume-unchaged
-	unignore = update-index --no-assume-unchaged
-	ignored = !git ls-files -v | grep "^[a-z]"
-	#diffall = !sh diffall.sh
+	untracked = cyan
+[grep]
+	lineNumber = true
+[push]
+	default = simple
+[rebase]
+	autostash = false
+[gui]
+	encoding = utf-8
 [diff]
 	#guitool = gvimdiff
 	guitool = winmerge
 [difftool]
-	prompt = false
+	prompt = true
+[difftool "vimdiff"]
+	path = vim
+	cmd = vim -d -O $LOCAL $REMOTE
+[difftool "gvimdiff"]
+	path = C:/Program Files (x86)/Vim/vim/gvim.exe
+	cmd = \"C:/Program Files (x86)/Vim/vim/gvim\" -d -O \"$LOCAL\" \"$REMOTE\"
 [difftool "winmerge"]
 	# See http://ptech.g.hatena.ne.jp/noromanba/20120602/1338633091
 	path = C:/Program Files/WinMerge/WinMergeU
 	cmd = \"C:/Program Files/WinMerge/WinMergeU\" -e -ub -dl \"Base\" -dr \"Mine\" \"$LOCAL\" \"$REMOTE\"
+[merge]
+	tool = TortoiseMerge
+[mergetool "gvimdiff"]
+	path = /usr/local/bin/vimdiff
+[mergetool "TortoiseMerge"]
+	path = C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe
+	cmd = \"C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe\" -base:\"$BASE\" -mine:\"$LOCAL\" -theirs:\"$REMOTE\" -merged:\"$MERGED\"
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	required = true

@@ -1,10 +1,17 @@
 "source $HOME/.vimrc
 
+"if v:version >=800
+"  " enabled directx
+"  set encoding=utf-8
+"endif
+
 " [Miscellaneous settings] " {{{
 set hlsearch
 set visualbell
 set t_vb=
-set columns=88 " enc/ff shows up in airline status
+"set columns=88 " enc/ff shows up in airline status
+set columns=100
+set lines=30
 
 " }}}
 " [IME] " {{{
@@ -74,12 +81,14 @@ if has("gui_running")
     "set guifont=M+2VM+IPAG_circle:h12
     " set guifont=Lucida\ Console:h12
       "+ need the feature 'font linking' setting.
-    "set guifont=‚³‚´‚È‚ÝƒSƒVƒbƒN:h11.5
-    "set guifont=IPAƒSƒVƒbƒN:h10:cSHIFTJIS
+    "set guifont=ã•ã–ãªã¿ã‚´ã‚·ãƒƒã‚¯:h11.5
+    "set guifont=IPAã‚´ã‚·ãƒƒã‚¯:h10:cSHIFTJIS
     "}}}
     "set guifont=MS_Gothic:h11
     "set guifont=MS_Mincho:h11
-    set guifont=Myrica_M:h12:cSHIFTJIS
+    "set guifont=Myrica_M:h12:cSHIFTJIS
+    "set guifont=Myrica_M:h9:cSHIFTJIS
+    set guifont=ï¼­ï¼³_æ˜Žæœ:h9:cSHIFTJIS
   endif
 endif
 
@@ -92,6 +101,10 @@ if has("gui_running")
 endif
 
 " }}}
+
+"if v:version >= 800
+"  set rop=type:directx
+"endif
 
 " END {{{
 " vim: tw=0:et:sts=2:ts=2:sw=2
