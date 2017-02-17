@@ -40,8 +40,8 @@ set guioptions-=e
 "colorscheme candycode
 "colorscheme molokai
 "colorscheme paintbox
-"colorscheme antares
-colorscheme CandyPaper
+colorscheme antares
+"colorscheme CandyPaper
 
 "set background=light
 "colorscheme solarized
@@ -86,9 +86,12 @@ if has("gui_running")
     "}}}
     "set guifont=MS_Gothic:h11
     "set guifont=MS_Mincho:h11
-    "set guifont=Myrica_M:h12:cSHIFTJIS
-    "set guifont=Myrica_M:h9:cSHIFTJIS
-    set guifont=ＭＳ_明朝:h9:cSHIFTJIS
+    if exists("g:MyCustomVimrc_HasMyrica") && g:MyCustomVimrc_HasMyrica == 1
+      set guifont=Myrica_M:h12:cSHIFTJIS
+      "set guifont=Myrica_M:h9:cSHIFTJIS
+    else
+      set guifont=ＭＳ_明朝:h9:cSHIFTJIS
+    endif
   endif
 endif
 
