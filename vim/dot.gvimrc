@@ -5,6 +5,10 @@
 "  set encoding=utf-8
 "endif
 
+function! s:isExistsTrue(var)
+  return exists(a:var) && a:var == 1
+endfunction
+
 " [Miscellaneous settings] " {{{
 set hlsearch
 set visualbell
@@ -40,11 +44,8 @@ set guioptions-=e
 "colorscheme candycode
 "colorscheme molokai
 "colorscheme paintbox
-"colorscheme antares
-"colorscheme CandyPaper
 colorscheme antares
-"colorscheme spring-night
-"set background=dark
+"colorscheme CandyPaper
 
 "set background=light
 "colorscheme solarized
@@ -69,6 +70,12 @@ if has("gui_running")
     "set guifont=m\+2pvera\ 10
   elseif has("gui_win32")
   "" on windows
+    "if <SID>isExistsTrue("g:MyCustomVimrc_EnableRenderOpts")
+      if v:version >= 800
+        " depends on Windows Adjustment Clear Type
+        set renderoptions=type:directx,renmode:5,taamode:2,geom:0,contrast:3,gamma:1.9
+      endif
+    "endif
     "{{{
     "set guifont=Courier\ New:h12:cSHIFTJIS
     "set guifont=Courier_New:h12,M+2VM+IPAG_circle:h12
@@ -85,9 +92,12 @@ if has("gui_running")
     "}}}
     "set guifont=MS_Gothic:h11
     "set guifont=MS_Mincho:h11
-    "set guifont=Myrica_M:h12:cSHIFTJIS
-    "set guifont=Myrica_M:h9:cSHIFTJIS
-    set guifont=ＭＳ_明朝:h9:cSHIFTJIS
+    if <SID>isExistsTrue("g:MyCustomVimrc_HasMyrica")
+      set guifont=Myrica_M:h12:cSHIFTJIS
+      "set guifont=Myrica_M:h9:cSHIFTJIS
+    else
+      set guifont=ＭＳ_明朝:h9:cSHIFTJIS
+    endif
   endif
 endif
 
