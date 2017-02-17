@@ -22,8 +22,8 @@
 " 
 " }}}
 
-language C
-set encoding=utf-8
+set encoding=utf-8 " renderopt
+
 " read custom script
 runtime custom/vimrc
 
@@ -1014,6 +1014,8 @@ Plugin 'vim-scripts/paintbox' "{{{
 "}}}
 Plugin 'Haron-Prime/Antares' "{{{
 "}}}
+Plugin 'mattn/calendar-vim' "{{{
+"}}}
 Plugin 'kannokanno/previm' "{{{
 "}}}
 Plugin 'tyru/open-browser.vim' "{{{
@@ -1051,11 +1053,6 @@ endif
 colorscheme zenburn
 
 "" [Look and feel]
-"" Highlight syntax settings {{{
-syntax enable
-syntax on
-
-"}}}
 "" Appear blanks {{{
 "set list
   "+ show visibly tab, end of line, wrap line...
@@ -1183,6 +1180,9 @@ command! CalcFP
     "+ See http://vim.g.hatena.ne.jp/kabiy/20090712/1247378981
     "      http://vim-users.jp/2009/07/hack-39/
 
+filetype plugin on
+filetype indent off
+set secure
 " END {{{
 " vim: tw=0:et:sts=2:ts=2:sw=2
 " vim: fdm=marker
