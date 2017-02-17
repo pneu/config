@@ -22,10 +22,12 @@
 " 
 " }}}
 
+set encoding=utf-8 " renderopt
+
 " read custom script
 runtime custom/vimrc
 
-filetype plugin on
+"filetype plugin on
   "+ set default values (note that order of reading plugin)
   "+ :help :filetype-overview
   "  Note: my autocmd, indent setttings etc. had better describe
@@ -947,18 +949,18 @@ Plugin 't9md/vim-quickhl' "{{{
 "}}}
 Plugin 'easymotion/vim-easymotion' "{{{
 "}}}
-Plugin 'haya14busa/incsearch.vim' "{{{
-nmap / <Plug>(incsearch-forward)
-nmap ? <Plug>(incsearch-backward)
-nmap g/ <Plug>(incsearch-stay)
-
-let g:incsearch#auto_nohlsearch = 1
-nmap n  <Plug>(incsearch-nohl-n)
-nmap N  <Plug>(incsearch-nohl-N)
-nmap *  <Plug>(incsearch-nohl-*)
-nmap #  <Plug>(incsearch-nohl-#)
-nmap g* <Plug>(incsearch-nohl-g*)
-nmap g# <Plug>(incsearch-nohl-g#)
+"Plugin 'haya14busa/incsearch.vim' "{{{
+"nmap / <Plug>(incsearch-forward)
+"nmap ? <Plug>(incsearch-backward)
+"nmap g/ <Plug>(incsearch-stay)
+"
+"let g:incsearch#auto_nohlsearch = 1
+"nmap n  <Plug>(incsearch-nohl-n)
+"nmap N  <Plug>(incsearch-nohl-N)
+"nmap *  <Plug>(incsearch-nohl-*)
+"nmap #  <Plug>(incsearch-nohl-#)
+"nmap g* <Plug>(incsearch-nohl-g*)
+"nmap g# <Plug>(incsearch-nohl-g#)
 
 "}}}
 Plugin 'rhysd/clever-f.vim' "{{{
@@ -992,6 +994,8 @@ Plugin 'vim-scripts/paintbox' "{{{
 "}}}
 Plugin 'Haron-Prime/Antares' "{{{
 "}}}
+Plugin 'mattn/calendar-vim' "{{{
+"}}}
 call vundle#end()
 
 "" [ColorScheme/Highlight syntax]
@@ -1017,11 +1021,6 @@ endif
 colorscheme zenburn
 
 "" [Look and feel]
-"" Highlight syntax settings {{{
-syntax enable
-syntax on
-
-"}}}
 "" Appear blanks {{{
 "set list
   "+ show visibly tab, end of line, wrap line...
@@ -1038,7 +1037,6 @@ scriptencoding
 
 "}}}
 "" Indent options {{{
-filetype indent off
 set shiftwidth=2
 set noexpandtab
 set noshiftround
@@ -1048,6 +1046,9 @@ set noautoindent
 set nocindent
 set nosmartindent
 set nosmarttab
+if v:version >= 800
+  set breakindent
+endif
 
 "}}}
 "" Indent options.2 (See 'filetype indent on') {{{
@@ -1138,6 +1139,9 @@ command! CalcFP
     "+ See http://vim.g.hatena.ne.jp/kabiy/20090712/1247378981
     "      http://vim-users.jp/2009/07/hack-39/
 
+filetype plugin on
+filetype indent off
+set secure
 " END {{{
 " vim: tw=0:et:sts=2:ts=2:sw=2
 " vim: fdm=marker

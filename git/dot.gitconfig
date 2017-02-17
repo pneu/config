@@ -6,7 +6,7 @@
 	whitespace = trailing-space,space-before-tab
 	editor = gvim
 	autocrlf = false
-	pager = nkf -W -w80 | LESSCHARSET=utf-8 less
+	#pager = nkf -W -w80 | LESSCHARSET=utf-8 less
 [push]
 	default = simple
 [color]
@@ -19,13 +19,13 @@
 	meta = yellow bold
 	#frag = magenta bold
 	frag = cyan bold
-	old = red bold
-	new = green bold
+	#old = red bold
+	#new = green bold
 	whitespace = red reverse
 [color "status"]
 	added = yellow
 	changed = green
-	untracked = cyan
+	untracked = cyan dim
 [alias]
 	st = status --short --branch
 	ci = commit -q

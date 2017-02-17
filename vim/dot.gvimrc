@@ -33,7 +33,8 @@ set guioptions-=e
 "colorscheme candycode
 "colorscheme molokai
 "colorscheme paintbox
-colorscheme antares
+"colorscheme antares
+colorscheme CandyPaper
 
 "set background=light
 "colorscheme solarized
@@ -58,6 +59,10 @@ if has("gui_running")
     "set guifont=m\+2pvera\ 10
   elseif has("gui_win32")
   "" on windows
+    if v:version >= 800
+      " depends on Windows Adjustment Clear Type
+      set renderoptions=type:directx,renmode:5,taamode:2,geom:0,contrast:3,gamma:1.9
+    endif
     "{{{
     "set guifont=Courier\ New:h12:cSHIFTJIS
     "set guifont=Courier_New:h12,M+2VM+IPAG_circle:h12
