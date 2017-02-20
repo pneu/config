@@ -44,8 +44,10 @@ set guioptions-=e
 "colorscheme candycode
 "colorscheme molokai
 "colorscheme paintbox
-colorscheme antares
-"colorscheme CandyPaper
+"colorscheme antares
+"colorscheme spring-night
+"set background=dark
+colorscheme CandyPaper
 
 "set background=light
 "colorscheme solarized

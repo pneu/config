@@ -1026,6 +1026,8 @@ Plugin 'rhysd/vim-color-spring-night' "{{{
 "}}}
 Plugin 'tpope/vim-fugitive' "{{{
 "}}}
+Plugin 'rust-lang/rust.vim' "{{{
+"}}}
 call vundle#end()
 endif
 filetype plugin indent on
@@ -1054,7 +1056,7 @@ colorscheme zenburn
 
 "" [Look and feel]
 "" Appear blanks {{{
-"set list
+set list
   "+ show visibly tab, end of line, wrap line...
 
 set listchars=tab:>.,eol:$,trail:_,precedes:<,extends:\
