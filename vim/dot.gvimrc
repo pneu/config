@@ -42,9 +42,10 @@ set guioptions-=e
 "colorscheme paintbox
 "colorscheme antares
 "colorscheme CandyPaper
-colorscheme antares
+"colorscheme antares
 "colorscheme spring-night
 "set background=dark
+colorscheme CandyPaper
 
 "set background=light
 "colorscheme solarized
