@@ -1,10 +1,5 @@
 "source $HOME/.vimrc
 
-"if v:version >=800
-"  " enabled directx
-"  set encoding=utf-8
-"endif
-
 function! s:isExistsTrue(var)
   return exists(a:var) && a:var == 1
 endfunction
@@ -112,10 +107,6 @@ if has("gui_running")
 endif
 
 " }}}
-
-"if v:version >= 800
-"  set rop=type:directx
-"endif
 
 " END {{{
 " vim: tw=0:et:sts=2:ts=2:sw=2
