@@ -1184,6 +1184,7 @@ command! CalcFP
 
 filetype plugin on
 filetype indent off
+syntax enable
 set secure
 " END {{{
 " vim: tw=0:et:sts=2:ts=2:sw=2
