@@ -568,6 +568,11 @@ nnoremap <silent> <C-Down>  :set lines-=1<CR>
 nnoremap <silent> <C-Left>  :set columns-=1<CR>
 nnoremap <silent> <C-Right> :set columns+=1<CR>
 
+nnoremap <silent> <C-S-Up>    :set lines+=10<CR>
+nnoremap <silent> <C-S-Down>  :set lines-=5<CR>
+nnoremap <silent> <C-S-Left>  :set columns-=10<CR>
+nnoremap <silent> <C-S-Right> :set columns+=5<CR>
+
 "}}}
 "" Switch :hls, :noh when leaving Lang-Arg mode(See :lmap @Lang-Arg) {{{
 "ln
@@ -857,15 +862,15 @@ nnoremap <silent> [FUFTag]<C-p>   :FufDir
         \ <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
 
 "}}}
-"" taglist.vim {{{
+Plugin 'vim-scripts/taglist.vim' "{{{
 nnoremap <silent> [Tag]<C-t>  :TlistToggle<CR>
 "let Tlist_Exit_OnlyWindow = 1
 let Tlist_File_Fold_Auto_Close = 1
 "let Tlist_Use_Right_Window = 1
 
 "}}}
-"" tagexplorer.vim {{{
-"nnoremap <silent> <F11>  :TagExplorer<CR>
+Plugin 'vim-scripts/tagexplorer.vim' "{{{
+nnoremap <silent> <F11>  :TagExplorer<CR>
 
 "}}}
 Plugin 'majutsushi/tagbar' "{{{
@@ -1027,6 +1032,24 @@ Plugin 'rhysd/vim-color-spring-night' "{{{
 Plugin 'tpope/vim-fugitive' "{{{
 "}}}
 Plugin 'rust-lang/rust.vim' "{{{
+"}}}
+Plugin 'PProvost/vim-ps1' "{{{
+"}}}
+"Plugin 'danilo-augusto/vim-afterglow' "{{{
+"}}}
+"Plugin 'tomasiser/vim-code-dark' "{{{
+"}}}
+Plugin 'reewr/vim-monokai-phoenix' "{{{
+"}}}
+"Plugin 'ltlollo/diokai' "{{{
+"}}}
+"Plugin 'monkoose/boa.vim' "{{{
+"}}}
+Plugin 'juanpabloaj/vim-pixelmuerto' "{{{
+"}}}
+Plugin 'tyrannicaltoucan/vim-quantum' "{{{
+"}}}
+Plugin 'fatih/vim-go' "{{{
 "}}}
 call vundle#end()
 endif

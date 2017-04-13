@@ -60,7 +60,7 @@
 [push]
 	default = simple
 [rebase]
-	autostash = false
+	autostash = true
 [gui]
 	encoding = utf-8
 [diff]

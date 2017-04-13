@@ -5,6 +5,9 @@
 # w3m () {
 # 	ls -l
 # }
+function git-rev-list () {
+	git rev-list --reverse "$@" | xargs -I % sh -c 'echo "% $(git describe --all %)"'
+}
 alias        rm="rm -i"
 alias        mv="mv -i"
 alias        cp="cp -i"
