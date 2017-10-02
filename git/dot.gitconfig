@@ -20,11 +20,13 @@
 	cp = cherry-pick
 	df = diff
 	dfc = diff --cached
+	dfns = diff --name-status
 	lg = log -p
 	l = log --graph --decorate --pretty=oneline --abbrev-commit
 	la = log --graph --decorate --pretty=oneline --abbrev-commit --all --notes
 	ls = ls-files
 	lh = log --format='%H' --reverse
+	lns = log --name-status
 	ignore = update-index --skip-worktree
 	unignore = update-index --no-skip-worktree
 	ignore2 = update-index --assume-unchanged
