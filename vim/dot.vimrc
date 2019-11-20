@@ -332,7 +332,41 @@ command! ReadSession call <SID>_F_ReadSession()
 command! -complete=file -nargs=1 Cgetfile call <SID>_F_GetErrorFile(<q-args>)
 
 "}}}
+""  {{{
+function! FindToLocationList(pattern)
+	let save_pos = getcurpos()
+	let bufnr = winbufnr(0)
+	call cursor(0, 0)
+	let locs = []
+	try
+		while 1
+			let [lnum, col] = searchpos(a:pattern, 'W')
+			if [lnum, col] == [0, 0]
+				break
+			else
+				call add(locs, {
+					\ 'bufnr': bufnr,
+					\ 'lnum': lnum,
+					\ 'pattern': a:pattern,
+					\ 'col': col,
+					\ 'vcol': 0,
+					\ 'text': getline(lnum)
+				\})
+			endif
+		endwhile
+		if locs == []
+			echoerr 'Pattern not found'
+		else
+			call setloclist(0, [])
+			call setloclist(0, locs, "a", )
+			call setloclist(0, [], "r", {'title': '/'. a:pattern . '/'})
+		endif
+	finally
+		call setpos('.', save_pos)
+	endtry
+endfunction
 
+"}}}
 "" [Miscellaneous settings]
 "" Compatibility {{{
 "set cpoptions-=B
@@ -340,6 +374,8 @@ command! -complete=file -nargs=1 Cgetfile call <SID>_F_GetErrorFile(<q-args>)
 set nocompatible
 
 "}}}
+set cryptmethod=blowfish2
+
 "" Language/Locale/Ctype etc. {{{
 language mes C
 
@@ -437,6 +473,8 @@ endif
 "}}}
 "" vimdiff settings"{{{
 set diffopt+=vertical
+nnoremap <silent> <Leader>dd :diffthis<CR>
+nnoremap <silent> <Leader>do :diffoff!<CR>
 
 "}}}
 "" <EOL> behaivior"{{{
@@ -563,16 +601,6 @@ nnoremap <silent> <Down>    <C-w>-
 nnoremap <silent> <Left>    <C-w><
 nnoremap <silent> <Right>   <C-w>>
 
-nnoremap <silent> <C-Up>    :set lines+=1<CR>
-nnoremap <silent> <C-Down>  :set lines-=1<CR>
-nnoremap <silent> <C-Left>  :set columns-=1<CR>
-nnoremap <silent> <C-Right> :set columns+=1<CR>
-
-nnoremap <silent> <C-S-Up>    :set lines+=10<CR>
-nnoremap <silent> <C-S-Down>  :set lines-=5<CR>
-nnoremap <silent> <C-S-Left>  :set columns-=10<CR>
-nnoremap <silent> <C-S-Right> :set columns+=5<CR>
-
 "}}}
 "" Switch :hls, :noh when leaving Lang-Arg mode(See :lmap @Lang-Arg) {{{
 "ln
@@ -623,6 +651,8 @@ nnoremap [Tag]k :cprevious<CR>
 "" Open/Close folds (1 level nested) {{{
 nnoremap <silent> [Tag]z      za
 nnoremap <silent> [Tag]<Space>  za
+nnoremap <silent> [Tag]f :foldopen!<CR>
+nnoremap <silent> [Tag]F :foldclose!<CR>
 
 "}}}
 "" Close all folds {{{
@@ -637,7 +667,8 @@ command! -bang -bar -nargs=0 CDL lcd<bang> %:h
 "}}}
 "" Copy/Paste to Clipboard {{{
 nnoremap <silent> [Tag]yy "+yy
-nnoremap <silent> [Tag]ye "+ye
+nnoremap <silent> <LocalLeader><LocalLeader><Space> :<C-u>%y +<CR>
+"nnoremap <silent> [Tag]ye "+ye
 vnoremap <silent> [Tag]y  "+y
 nnoremap <silent> [Tag]p  "+p
 nnoremap <silent> [Tag]P  "+P
@@ -700,6 +731,14 @@ if has("winaltkeys")
 endif
 
 "}}}
+"" multibyte matchpair {{{
+set matchpairs+=（:）
+set matchpairs+=「:」
+set matchpairs+=【:】
+set matchpairs+=『:』
+set matchpairs+=〔:〕
+
+"}}}
 "" Templete {{{
 "au BufNewFile *.c    0r ~/.vim/skel/skeleton.c
 " \ |execute 'normal! G"_dd'
@@ -722,6 +761,10 @@ augroup InsertTemplete
 augroup END
 
 "}}}
+nnoremap <silent> ,r :setlocal nomodifiable noswapfile readonly<CR>
+nnoremap <silent> ,R :setlocal modifiable swapfile noreadonly<CR>
+nnoremap <silent> ,a :setlocal virtualedit=all<CR>
+nnoremap <silent> ,A :setlocal virtualedit=<CR>
 
 "" [plugin settings] (built-in, external command or my defined)
 "" changelog {{{
@@ -1021,7 +1064,11 @@ Plugin 'Haron-Prime/Antares' "{{{
 "}}}
 Plugin 'mattn/calendar-vim' "{{{
 "}}}
-Plugin 'kannokanno/previm' "{{{
+"Plugin 'kannokanno/previm' "{{{
+"}}}
+Plugin 'kazuph/previm', 'feature/add-plantuml-plugin' "{{{
+"}}}
+Plugin 'aklt/plantuml-syntax' "{{{
 "}}}
 Plugin 'tyru/open-browser.vim' "{{{
 "}}}
@@ -1050,6 +1097,17 @@ Plugin 'juanpabloaj/vim-pixelmuerto' "{{{
 Plugin 'tyrannicaltoucan/vim-quantum' "{{{
 "}}}
 Plugin 'fatih/vim-go' "{{{
+"}}}
+" vim-script/diffchar.vim "{{{
+"let g:DiffModeSync=
+"let g:DiffPairVisible=
+"let g:DiffUnit=
+"let g:DiffUpdate=
+"let g:DiffSplitTime=
+"}}}
+Plugin 'sgeb/vim-diff-fold' "{{{
+"}}}
+Plugin 'NLKNguyen/papercolor-theme' "{{{
 "}}}
 call vundle#end()
 endif
@@ -1136,7 +1194,7 @@ set laststatus=2
 set ruler
 set showcmd
 set noshowmode
-set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%{&enc}/%{&fenc}/%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%cC,%l/%L\ [%{exists('w:locksw')?'L,':''}%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
+set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%{&enc}/%{&fenc}/%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%vC,%l/%L\ [%{exists('w:locksw')?'L,':''}%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
 
 "}}}
 "" Highlight the current line {{{

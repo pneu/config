@@ -105,6 +105,18 @@ if has("gui_running")
   nnoremap  [Tag]S  :source $MYGVIMRC<CR>
   nnoremap  [Tag]V  :edit $MYGVIMRC<CR>
 endif
+nnoremap <silent> <C-Up>    :set lines+=1<CR>
+nnoremap <silent> <C-Down>  :set lines-=1<CR>
+nnoremap <silent> <C-Left>  :set columns-=1<CR>
+nnoremap <silent> <C-Right> :set columns+=1<CR>
+
+nnoremap <silent> <C-S-Up>    :set lines+=10<CR>
+nnoremap <silent> <C-S-Down>  :set lines-=5<CR>
+nnoremap <silent> <C-S-Left>  :set columns-=10<CR>
+nnoremap <silent> <C-S-Right> :set columns+=5<CR>
+
+nnoremap <silent> <M-w> :set columns=150 lines=40<CR>
+nnoremap <silent> <S-M-w> :set columns=100 lines=30<CR>
 
 " }}}
 

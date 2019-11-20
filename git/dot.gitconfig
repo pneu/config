@@ -10,6 +10,7 @@
 	autocrlf = false
 	#pager = nkf -W -w80 | LESSCHARSET=utf-8 less
 	pager = c:/Users/path/to/Git/bin/diff-highlight | less -x 4 -q -R -X -F
+	#pager = less -x 4 -q -R -X -F
 	preloadIndex = true
 	fscache = true
 [alias]
@@ -37,7 +38,7 @@
 	last-change = diff --name-status -M -C -C @^!
 	today-change = diff --name-status -M -C -C @{yesterday}..HEAD
 	today-changelog = log --name-status -M -C -C @{yesterday}..HEAD
-	wipe = clean -e .hg/ -e .hgignore -dx
+	wipe = clean -e .hg/ -e .hgignore -d
 [color]
 	branch = auto
 	diff = auto
@@ -87,6 +88,8 @@
 [mergetool "TortoiseMerge"]
 	path = C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe
 	cmd = \"C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe\" -base:\"$BASE\" -mine:\"$LOCAL\" -theirs:\"$REMOTE\" -merged:\"$MERGED\"
+#[mergetool "vscode"]
+#	cmd = code --diff --wait \"$MERGED\"
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f

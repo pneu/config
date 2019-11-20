@@ -1,5 +1,6 @@
 # local version: 2.4
 # You are recommended to take some symbols,
+#   -DUSE104on109mix;-DSANDS;-DMOD_0;-DMOD_0_HENKAN;-DHHKBproTypeS;-DKANA_TO_BS;-DTHUMB_BS
 #
 # [symbols]
 #  USE104on109mix    : 104 on jp106 keyboard (minimum definition from 104on109)
@@ -34,6 +35,7 @@
 #
 #  <‚Ð‚ç‚ª‚ÈƒL[‚ÉŠÖ‚·‚é>
 #  KANA_TO_CTRL      : bind ‚Ð‚ç‚ª‚È to Ctrl
+#  KANA_TO_BS        : bind ‚Ð‚ç‚ª‚È to BackSpace
 #
 # [keymaps]
 # . myGlobal   : default keymap
@@ -54,7 +56,8 @@ else
 endif
 
 if ( USE104on109mix )
-  def subst  A-”¼Šp/‘SŠp        = $ToggleIME
+  def subst  ”¼Šp/‘SŠp        = $GRAVE_ACCENT
+  def subst  A-”¼Šp/‘SŠp      = $ToggleIME
   def subst  S-*_2              = $COMMERCIAL_AT
   def subst  S-*_6              = $CIRCUMFLEX_ACCENT
   def subst  S-*_7              = $AMPERSAND
@@ -217,27 +220,37 @@ if ( USE104on109mix )
       key R-*E0‚Ð‚ç‚ª‚È = &Ignore
       key M0-*IC-E0‚Ð‚ç‚ª‚È = $ToggleIME  # •ÏŠ· needs to assign mod0
     endif
+  else
+    if ( MOD_0_FF )
+      mod mod0 += !!•ÏŠ·
+      key R-*•ÏŠ· = &Ignore
+      key M0-*IL-*IC-•ÏŠ· = &SetImeStatus(on)
+    endif
   endif
 endif
 
 if ( USE104on109mix )
-  if ( MOD_0_HENKAN )
+  if ( MOD_0_FF )
+    key *E0‚Ð‚ç‚ª‚È = &SetImeStatus(off)
   else
-    mod shift += •ÏŠ·
-    key *•ÏŠ· = *LeftShift
-  endif
-  if ( MOD_0_HIRAGANA )
-  else
-    if ( KANA_TO_CTRL )
-      mod ctrl += E0‚Ð‚ç‚ª‚È
-      key *E0‚Ð‚ç‚ª‚È = *RightControl
+    if ( MOD_0_HENKAN )
     else
-      if ( KANA_TO_BS )
-        key *E0‚Ð‚ç‚ª‚È= *BackSpace
+      mod shift += •ÏŠ·
+      key *•ÏŠ· = *LeftShift
+    endif
+    if ( MOD_0_HIRAGANA )
+    else
+      if ( KANA_TO_CTRL )
+        mod ctrl += E0‚Ð‚ç‚ª‚È
+        key *E0‚Ð‚ç‚ª‚È = *RightControl
       else
-        mod alt    += E0‚Ð‚ç‚ª‚È
-        key *E0‚Ð‚ç‚ª‚È  = *RightAlt
-        #key *E0‚Ð‚ç‚ª‚È = *Enter
+        if ( KANA_TO_BS )
+          key *E0‚Ð‚ç‚ª‚È= *BackSpace
+        else
+          mod alt    += E0‚Ð‚ç‚ª‚È
+          key *E0‚Ð‚ç‚ª‚È  = *RightAlt
+          #key *E0‚Ð‚ç‚ª‚È = *Enter
+        endif
       endif
     endif
   endif

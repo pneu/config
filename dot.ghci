@@ -1,2 +1,8 @@
 :set prompt "\n[%s]\n> "
 :set editor gvim
+:module + Control.Applicative
+:module + Control.Monad
+:module + Data.Maybe
+:module + Data.Bits
+:module + Text.Printf
+import qualified Data.List as L
