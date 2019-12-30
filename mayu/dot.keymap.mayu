@@ -1,5 +1,9 @@
 # local version: 2.4
 # You are recommended to take some symbols,
+#   regular: -DUSE109;-DUSE104on109mix;-DSANDS;-DMOD_0;-DMOD_0_HENKAN;-DTHUMB_BS
+#   us: -DUSE109;-DUSE104onJPenv;-DSANDS;-DHHKBproTypeS;-DRALT_WIN
+#   m: -DUSE109;-DUSE104on109mix;-DSANDS;-DM_TYPE;-DMOD_0;-DMOD_0_HENKAN;-DMOD1;-DMOD1_ONESHOT;-DHHKBproTypeS
+#   hhkb(incomplete): -DUSE109;-DUSE104on109mix;-DSWAP_RIGHTSHIFT;-DMOD1;-DMOD1_ONESHOT;-DNUM_CENTER;-DNUM_ABOVE;-DHHKBproTypeS
 #
 # [symbols]
 #  USE104on109mix    : 104 on jp106 keyboard (minimum definition from 104on109)
@@ -485,86 +489,86 @@ keymap custommap : myGlobal
 #key C-*IC-S-Space  = $ToggleIME  # prefix S added because of SANDS
 
 if ( USE104on109mix )
-# if ( M_TYPE )
-#   key IL-*IC- =
-# 
-#   key Q = Q
-#   key W = L
-#   key E = J
-#   key R = F
-#   key T = D H I
-#   key Y = M
-#   key U = Y
-#   key I = R
-#   key O = W
-#   key P = P
-#   key A = E
-#   key S = U
-#   key D = I
-#   key F = A
-#   key G = O
-#   key H = K
-#   key J = S
-#   key K = T
-#   key L = N
-#   key Semicolon = H
-#   key Z = E I
-#   key X = U U
-#   key C = U I
-#   key V = A I
-#   key B = O U
-#   key N = G
-#   key M = Z
-#   key Comma = D
-#   key FullStop = Comma
-#   key Solidus = B
-# 
-#   # 母音シフト
-#   key M0-Q = E K I
-#   key M0-W = U K U
-#   key M0-E = I K U
-#   key M0-R = A K U
-#   key M0-T = O K U
-#   key M0-A = E N N
-#   key M0-S = U N N
-#   key M0-D = I N N
-#   key M0-F = A N N
-#   key M0-G = O N N
-#   key M0-Z = E T U
-#   key M0-X = U T U
-#   key M0-C = I T U
-#   key M0-V = A T U
-#   key M0-B = O T U
-# 
-#   key M1-X = X
-#   key M1-C = C
-#   key M1-V = V
-# 
-#   # 子音シフト
-#   key M1-Y = M Y
-#   key M1-U = X T U
-#   key M1-I = R Y
-#   key M1-O = N N
-#   key M1-P = P Y
-#   key M1-H = K Y
-#   key M1-J = S Y
-#   key M1-K = T Y
-#   key M1-L = N Y
-#   key M1-Semicolon = H Y
-#   key M1-N = G Y
-#   key M1-M = Z Y
-#   key M1-Comma = D Y
-#   key M1-FullStop = FullStop
-#   key M1-Solidus = B Y
-# 
-#   key M0-Semicolon = Semicolon
-#   key M0-S-Semicolon = Colon
-#   key M0-Solidus = Solidus
-#   key M0-S-Solidus = S-Solidus
-# 
-#   # restore default modifier
-#   key ~C-~M-~S-*NL-*CL-*SL-*KL-*IL-~IC-*MAX-*MIN-*MMAX-*MMIN-*T-*TS- =
-# endif
+  if ( M_TYPE )
+    key IL-*IC- =
+
+    key Q = Q
+    key W = L
+    key E = J
+    key R = F
+    key T = D H I
+    key Y = M
+    key U = Y
+    key I = R
+    key O = W
+    key P = P
+    key A = E
+    key S = U
+    key D = I
+    key F = A
+    key G = O
+    key H = K
+    key J = S
+    key K = T
+    key L = N
+    key Semicolon = H
+    key Z = E I
+    key X = U U
+    key C = U I
+    key V = A I
+    key B = O U
+    key N = G
+    key M = Z
+    key Comma = D
+    key FullStop = Comma
+    key Solidus = B
+
+    # 母音シフト
+    key M0-Q = E K I
+    key M0-W = U K U
+    key M0-E = I K U
+    key M0-R = A K U
+    key M0-T = O K U
+    key M0-A = E N N
+    key M0-S = U N N
+    key M0-D = I N N
+    key M0-F = A N N
+    key M0-G = O N N
+    key M0-Z = E T U
+    key M0-X = U T U
+    key M0-C = I T U
+    key M0-V = A T U
+    key M0-B = O T U
+
+    key M1-X = X
+    key M1-C = C
+    key M1-V = V
+
+    # 子音シフト
+    key M1-Y = M Y
+    key M1-U = X T U
+    key M1-I = R Y
+    key M1-O = N N
+    key M1-P = P Y
+    key M1-H = K Y
+    key M1-J = S Y
+    key M1-K = T Y
+    key M1-L = N Y
+    key M1-Semicolon = H Y
+    key M1-N = G Y
+    key M1-M = Z Y
+    key M1-Comma = D Y
+    key M1-FullStop = FullStop
+    key M1-Solidus = B Y
+
+    key M0-Semicolon = Semicolon
+    key M0-S-Semicolon = Colon
+    key M0-Solidus = Solidus
+    key M0-S-Solidus = S-Solidus
+
+    # restore default modifier
+    key ~C-~M-~S-*NL-*CL-*SL-*KL-*IL-~IC-*MAX-*MIN-*MMAX-*MMIN-*T-*TS- =
+  endif
 endif
 
 #}}}
