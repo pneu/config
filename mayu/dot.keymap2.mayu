@@ -1,9 +1,6 @@
 # local version: 2.4
 # You are recommended to take some symbols,
-#   regular: -DUSE109;-DUSE104on109mix;-DSANDS;-DMOD_0;-DMOD_0_HENKAN;-DTHUMB_BS
-#   us: -DUSE109;-DUSE104onJPenv;-DSANDS;-DHHKBproTypeS;-DRALT_WIN
-#   m: -DUSE109;-DUSE104on109mix;-DSANDS;-DM_TYPE;-DMOD_0;-DMOD_0_HENKAN;-DMOD1;-DMOD1_ONESHOT;-DHHKBproTypeS
-#   hhkb(incomplete): -DUSE109;-DUSE104on109mix;-DSWAP_RIGHTSHIFT;-DMOD1;-DMOD1_ONESHOT;-DNUM_CENTER;-DNUM_ABOVE;-DHHKBproTypeS
+#   -DUSE104on109mix;-DSANDS;-DMOD_0;-DMOD_0_HENKAN;-DHHKBproTypeS;-DKANA_TO_BS;-DTHUMB_BS
 #
 # [symbols]
 #  USE104on109mix    : 104 on jp106 keyboard (minimum definition from 104on109)
@@ -38,6 +35,7 @@
 #
 #  <‚Ð‚ç‚ª‚ÈƒL[‚ÉŠÖ‚·‚é>
 #  KANA_TO_CTRL      : bind ‚Ð‚ç‚ª‚È to Ctrl
+#  KANA_TO_BS        : bind ‚Ð‚ç‚ª‚È to BackSpace
 #
 # [keymaps]
 # . myGlobal   : default keymap
@@ -57,39 +55,9 @@ else
   endif
 endif
 
-# http://chokuto.ifdef.jp/urawaza/prm/virtual_key_code.html
-# https://qiita.com/crotczet/items/4e65684dbf12942e27f2
-def key F13 = 0x64
-def key F14 = 0x65
-def key F15 = 0x66
-def key F16 = 0x67
-def key F17 = 0x68
-def key F18 = 0x69
-def key F19 = 0x6a
-def key F20 = 0x6b
-def key F21 = 0x6c
-def key F22 = 0x6d
-def key F23 = 0x6e
-def key F24 = 0x76
-
-if ( USEDYGMA_0 )
-  def alias Z13 = F13
-  def alias Z14 = F14
-  def alias Z15 = F15
-else
-  def alias Z13 = •ÏŠ·
-  def alias Z14 = E0–³•ÏŠ·
-  def alias Z15 = E0‚Ð‚ç‚ª‚È
-endif
-
-if ( USEDYGMA_0 )
-  def subst ~S-*F16 = $GRAVE_ACCENT
-  def subst  S-*F16 = $TILDE
-  #def subst *F17 = *YenSign # \|
-endif
-
 if ( USE104on109mix )
-  def subst  A-E0”¼Šp/‘SŠp        = $ToggleIME
+  def subst  ”¼Šp/‘SŠp        = $GRAVE_ACCENT
+  def subst  A-”¼Šp/‘SŠp      = $ToggleIME
   def subst  S-*_2              = $COMMERCIAL_AT
   def subst  S-*_6              = $CIRCUMFLEX_ACCENT
   def subst  S-*_7              = $AMPERSAND
@@ -135,8 +103,8 @@ else
     def subst S-*CircumflexAccent = $PLUS_SIGN
     def subst ~S-*RightSquareBracket = $REVERSE_SOLIDUS
     def subst S-*RightSquareBracket = $VERTICAL_LINE
-    def subst ~S-*E0”¼Šp/‘SŠp = $GRAVE_ACCENT
-    def subst S-~A-*E0”¼Šp/‘SŠp = $TILDE
+    def subst ~S-*”¼Šp/‘SŠp = $GRAVE_ACCENT
+    def subst S-~A-*”¼Šp/‘SŠp = $TILDE
     def subst ~S-~A-*CommercialAt = $LEFT_SQUARE_BRACKET
     def subst S-*CommercialAt = $LEFT_CURLY_BRACKET
     def subst ~S-*LeftSquareBracket = $RIGHT_SQUARE_BRACKET
@@ -144,9 +112,9 @@ else
     def subst S-*Semicolon = $COLON
     def subst ~S-*Colon = $APOSTROPHE
     def subst S-*Colon = $QUOTATION_MARK
-    #def subst ~S-*Z13 = LWindows
-    def subst ~S-*Z13 = *E0”¼Šp/‘SŠp
-    def subst A-*E0”¼Šp/‘SŠp = E0”¼Šp/‘SŠp
+    #def subst ~S-*•ÏŠ· = LWindows
+    def subst ~S-*•ÏŠ· = *”¼Šp/‘SŠp
+    def subst A-*”¼Šp/‘SŠp = ”¼Šp/‘SŠp
 
     mod shift += E0RightShift
     key *E0RightShift = *LeftShift
@@ -192,39 +160,39 @@ endif
 if ( USE104on109mix )
   if ( WORKAROUND104 )
     mod ctrl    -= LeftControl
-    key *LeftControl = *E0”¼Šp/‘SŠp
+    key *LeftControl = *”¼Šp/‘SŠp
   endif
   if ( MOD_2 )
-    #mod mod2 += !!E0”¼Šp/‘SŠp
-    #key R-*E0”¼Šp/‘SŠp = &Ignore
+    #mod mod2 += !!”¼Šp/‘SŠp
+    #key R-*”¼Šp/‘SŠp = &Ignore
     #key M2-*S = ScrollLock
   endif
   
   if ( THUMB_BS )
-    key *Z14= *BackSpace
+    key *–³•ÏŠ·= *BackSpace
   else
     if ( MOD1 )
       if ( MOD1_ONESHOT )
-        mod mod1 += !!Z14
-        key R-*Z14 = &Ignore
-        key M1-*IL-*IC-Z14 = *BackSpace
+        mod mod1 += !!–³•ÏŠ·
+        key R-*–³•ÏŠ· = &Ignore
+        key M1-*IL-*IC-–³•ÏŠ· = *BackSpace
       else
-        mod mod1 += Z14
-        key R-*Z14 = &Ignore
+        mod mod1 += –³•ÏŠ·
+        key R-*–³•ÏŠ· = &Ignore
       endif
     else
       if ( THUMB_CTRL )
         if ( THUMB_CTRL_ONESHOT )
-          mod ctrl += !!Z14
-          key R-*Z14 = &Ignore
-          key C-*IL-*IC-Z14 = *BackSpace
+          mod ctrl += !!–³•ÏŠ·
+          key R-*–³•ÏŠ· = &Ignore
+          key C-*IL-*IC-–³•ÏŠ· = *BackSpace
         else
-          mod ctrl += Z14
-          key *Z14= *LeftControl
+          mod ctrl += –³•ÏŠ·
+          key *–³•ÏŠ·= *LeftControl
         endif
       else
-        mod win    += Z14
-        key *Z14= *LeftWindows
+        mod win    += –³•ÏŠ·
+        key *–³•ÏŠ·= *LeftWindows
       endif
     endif
   endif
@@ -237,51 +205,51 @@ if ( RALT_WIN )
 endif
 
 ## alt
-#mod alt    += Z14
-#key *Z14= *LeftAlt
+#mod alt    += –³•ÏŠ·
+#key *–³•ÏŠ·= *LeftAlt
 
 if ( USE104on109mix )
   if ( MOD_0 )
     if ( MOD_0_HENKAN )
-      mod mod0 += !!Z13
-      key R-*Z13 = &Ignore
-      key M0-*IL-*IC-Z13 = $ToggleIME  # Z13 needs to assign mod0
+      mod mod0 += !!•ÏŠ·
+      key R-*•ÏŠ· = &Ignore
+      key M0-*IL-*IC-•ÏŠ· = $ToggleIME  # •ÏŠ· needs to assign mod0
     endif
     if ( MOD_0_HIRAGANA )
-      mod mod0 += !!Z15
-      key R-*Z15 = &Ignore
-      key M0-*IC-Z15 = $ToggleIME  # Z13 needs to assign mod0
+      mod mod0 += !!E0‚Ð‚ç‚ª‚È
+      key R-*E0‚Ð‚ç‚ª‚È = &Ignore
+      key M0-*IC-E0‚Ð‚ç‚ª‚È = $ToggleIME  # •ÏŠ· needs to assign mod0
     endif
   else
     if ( MOD_0_FF )
-      mod mod0 += !!Z13
-      key R-*Z13 = &Ignore
-      key M0-*IL-*IC-Z13 = &SetImeStatus(on)
+      mod mod0 += !!•ÏŠ·
+      key R-*•ÏŠ· = &Ignore
+      key M0-*IL-*IC-•ÏŠ· = &SetImeStatus(on)
     endif
   endif
 endif
 
 if ( USE104on109mix )
   if ( MOD_0_FF )
-    key *Z15 = &SetImeStatus(off)
+    key *E0‚Ð‚ç‚ª‚È = &SetImeStatus(off)
   else
     if ( MOD_0_HENKAN )
     else
-      mod shift += Z13
-      key *Z13 = *LeftShift
+      mod shift += •ÏŠ·
+      key *•ÏŠ· = *LeftShift
     endif
     if ( MOD_0_HIRAGANA )
     else
       if ( KANA_TO_CTRL )
-        mod ctrl += Z15
-        key *Z15 = *RightControl
+        mod ctrl += E0‚Ð‚ç‚ª‚È
+        key *E0‚Ð‚ç‚ª‚È = *RightControl
       else
         if ( KANA_TO_BS )
-          key *Z15= *BackSpace
+          key *E0‚Ð‚ç‚ª‚È= *BackSpace
         else
-          mod alt    += Z15
-          key *Z15  = *RightAlt
-          #key *Z15 = *Enter
+          mod alt    += E0‚Ð‚ç‚ª‚È
+          key *E0‚Ð‚ç‚ª‚È  = *RightAlt
+          #key *E0‚Ð‚ç‚ª‚È = *Enter
         endif
       endif
     endif
@@ -308,23 +276,21 @@ endif
 #}}}
 #  Swap:      {{{
 
-# * swap Esc for E0”¼Šp/‘SŠp
+# * swap Esc for ”¼Šp/‘SŠp
 #
 if ( USE104on109mix )
-  #def subst *Esc   = *E0”¼Šp/‘SŠp
+  #def subst *Esc   = *”¼Šp/‘SŠp
   if ( HHKBpro )
-    # def subst ~S-*E0”¼Šp/‘SŠp = GraveAccent
-    # def subst S-*E0”¼Šp/‘SŠp  = BackQuote
-    key ~S-*E0”¼Šp/‘SŠp = $GRAVE_ACCENT
-    key S-*E0”¼Šp/‘SŠp  = $TILDE
+    # def subst ~S-*”¼Šp/‘SŠp = GraveAccent
+    # def subst S-*”¼Šp/‘SŠp  = BackQuote
   else
-    # def subst *E0”¼Šp/‘SŠp  = *Esc
+    # def subst *”¼Šp/‘SŠp  = *Esc
   endif
   if ( HHKBproTypeS )
-    # key *E0”¼Šp/‘SŠp      = &SetImeStatus(off)
+    # key *”¼Šp/‘SŠp      = &SetImeStatus(off)
   #else
-  #  def subst ~S-*E0”¼Šp/‘SŠp = $GRAVE_ACCENT
-  #  def subst S-*E0”¼Šp/‘SŠp  = $TILDE
+  #  def subst ~S-*”¼Šp/‘SŠp = $GRAVE_ACCENT
+  #  def subst S-*”¼Šp/‘SŠp  = $TILDE
   endif
 endif
 
@@ -532,86 +498,86 @@ keymap custommap : myGlobal
 #key C-*IC-S-Space  = $ToggleIME  # prefix S added because of SANDS
 
 if ( USE104on109mix )
-  if ( M_TYPE )
-    key IL-*IC- =
-
-    key Q = Q
-    key W = L
-    key E = J
-    key R = F
-    key T = D H I
-    key Y = M
-    key U = Y
-    key I = R
-    key O = W
-    key P = P
-    key A = E
-    key S = U
-    key D = I
-    key F = A
-    key G = O
-    key H = K
-    key J = S
-    key K = T
-    key L = N
-    key Semicolon = H
-    key Z = E I
-    key X = U U
-    key C = U I
-    key V = A I
-    key B = O U
-    key N = G
-    key M = Z
-    key Comma = D
-    key FullStop = Comma
-    key Solidus = B
-
-    # •ê‰¹ƒVƒtƒg
-    key M0-Q = E K I
-    key M0-W = U K U
-    key M0-E = I K U
-    key M0-R = A K U
-    key M0-T = O K U
-    key M0-A = E N N
-    key M0-S = U N N
-    key M0-D = I N N
-    key M0-F = A N N
-    key M0-G = O N N
-    key M0-Z = E T U
-    key M0-X = U T U
-    key M0-C = I T U
-    key M0-V = A T U
-    key M0-B = O T U
-
-    key M1-X = X
-    key M1-C = C
-    key M1-V = V
-
-    # Žq‰¹ƒVƒtƒg
-    key M1-Y = M Y
-    key M1-U = X T U
-    key M1-I = R Y
-    key M1-O = N N
-    key M1-P = P Y
-    key M1-H = K Y
-    key M1-J = S Y
-    key M1-K = T Y
-    key M1-L = N Y
-    key M1-Semicolon = H Y
-    key M1-N = G Y
-    key M1-M = Z Y
-    key M1-Comma = D Y
-    key M1-FullStop = FullStop
-    key M1-Solidus = B Y
-
-    key M0-Semicolon = Semicolon
-    key M0-S-Semicolon = Colon
-    key M0-Solidus = Solidus
-    key M0-S-Solidus = S-Solidus
-
-    # restore default modifier
-    key ~C-~M-~S-*NL-*CL-*SL-*KL-*IL-~IC-*MAX-*MIN-*MMAX-*MMIN-*T-*TS- =
-  endif
+# if ( M_TYPE )
+#   key IL-*IC- =
+# 
+#   key Q = Q
+#   key W = L
+#   key E = J
+#   key R = F
+#   key T = D H I
+#   key Y = M
+#   key U = Y
+#   key I = R
+#   key O = W
+#   key P = P
+#   key A = E
+#   key S = U
+#   key D = I
+#   key F = A
+#   key G = O
+#   key H = K
+#   key J = S
+#   key K = T
+#   key L = N
+#   key Semicolon = H
+#   key Z = E I
+#   key X = U U
+#   key C = U I
+#   key V = A I
+#   key B = O U
+#   key N = G
+#   key M = Z
+#   key Comma = D
+#   key FullStop = Comma
+#   key Solidus = B
+# 
+#   # •ê‰¹ƒVƒtƒg
+#   key M0-Q = E K I
+#   key M0-W = U K U
+#   key M0-E = I K U
+#   key M0-R = A K U
+#   key M0-T = O K U
+#   key M0-A = E N N
+#   key M0-S = U N N
+#   key M0-D = I N N
+#   key M0-F = A N N
+#   key M0-G = O N N
+#   key M0-Z = E T U
+#   key M0-X = U T U
+#   key M0-C = I T U
+#   key M0-V = A T U
+#   key M0-B = O T U
+# 
+#   key M1-X = X
+#   key M1-C = C
+#   key M1-V = V
+# 
+#   # Žq‰¹ƒVƒtƒg
+#   key M1-Y = M Y
+#   key M1-U = X T U
+#   key M1-I = R Y
+#   key M1-O = N N
+#   key M1-P = P Y
+#   key M1-H = K Y
+#   key M1-J = S Y
+#   key M1-K = T Y
+#   key M1-L = N Y
+#   key M1-Semicolon = H Y
+#   key M1-N = G Y
+#   key M1-M = Z Y
+#   key M1-Comma = D Y
+#   key M1-FullStop = FullStop
+#   key M1-Solidus = B Y
+# 
+#   key M0-Semicolon = Semicolon
+#   key M0-S-Semicolon = Colon
+#   key M0-Solidus = Solidus
+#   key M0-S-Solidus = S-Solidus
+# 
+#   # restore default modifier
+#   key ~C-~M-~S-*NL-*CL-*SL-*KL-*IL-~IC-*MAX-*MIN-*MMAX-*MMIN-*T-*TS- =
+# endif
 endif
 
 #}}}
@@ -692,7 +658,7 @@ keymap emacsedit : emacslike
 #key F18DOWN    = &VK(RButton)
 #key R-F18    = &Ignore
 #key F18UP    = &VK(U-RButton)
-#key C-Z14    = C-V
+#key C-F14    = C-V
 
 #}}}
 
