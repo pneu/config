@@ -1,9 +1,6 @@
-# local version: 2.4
+# local version: 2.5
 # You are recommended to take some symbols,
-#   regular: -DUSE109;-DUSE104on109mix;-DSANDS;-DMOD_0;-DMOD_0_HENKAN;-DTHUMB_BS
-#   us: -DUSE109;-DUSE104onJPenv;-DSANDS;-DHHKBproTypeS;-DRALT_WIN
-#   m: -DUSE109;-DUSE104on109mix;-DSANDS;-DM_TYPE;-DMOD_0;-DMOD_0_HENKAN;-DMOD1;-DMOD1_ONESHOT;-DHHKBproTypeS
-#   hhkb(incomplete): -DUSE109;-DUSE104on109mix;-DSWAP_RIGHTSHIFT;-DMOD1;-DMOD1_ONESHOT;-DNUM_CENTER;-DNUM_ABOVE;-DHHKBproTypeS
+#   -DUSE104on109mix;-DSANDS;-DMOD_0;-DMOD_0_HENKAN;-DHHKBproTypeS;-DKANA_TO_BS;-DTHUMB_BS
 #
 # [symbols]
 #  USE104on109mix    : 104 on jp106 keyboard (minimum definition from 104on109)
@@ -16,13 +13,13 @@
 #  HHKBpro           : mmm forgotten.
 #  HHKBproTypeS      : 半角/全角 occupy a convenient position
 #
-#  <E0無変換キーに関する>
-#  THUMB_BS          : replace E0無変換 into BackSpace
+#  <無変換キーに関する>
+#  THUMB_BS          : replace 無変換 into BackSpace
 #  MOD1              : implement MOD1 key
 #    MOD1_ONESHOT    : Mod1 on make, BackSpace on break
 #    NUM_CENTER      : num row dip to home
 #    NUM_ABOVE       : num row dip to qwerty
-#  THUMB_CTRL        : replace E0無変換 into Ctrl
+#  THUMB_CTRL        : replace 無変換 into Ctrl
 #  THUMB_CTRL_ONESHOT: Ctrl on make, BackSpace on break
 #
 #  <RightAltに関する>
@@ -38,6 +35,7 @@
 #
 #  <ひらがなキーに関する>
 #  KANA_TO_CTRL      : bind ひらがな to Ctrl
+#  KANA_TO_BS        : bind ひらがな to BackSpace
 #
 # [keymaps]
 # . myGlobal   : default keymap
@@ -78,8 +76,21 @@ if ( USEDYGMA_0 )
   def alias Z15 = F15
 else
   def alias Z13 = 変換
-  def alias Z14 = E0無変換
-  def alias Z15 = E0ひらがな
+  if ( USENLS )
+    def alias Z14 = E0無変換
+    def alias Z15 = E0ひらがな
+  else
+    def alias Z14 = 無変換
+    def alias Z15 = ひらがな
+  endif
+endif
+
+if ( USENLS )
+  def alias ZZenkaku = E0半角/全角
+  def alias ZEisuu = E0英数
+else
+  def alias ZZenkaku = 半角/全角
+  def alias ZEisuu = 英数
 endif
 
 if ( USEDYGMA_0 )
@@ -89,7 +100,8 @@ if ( USEDYGMA_0 )
 endif
 
 if ( USE104on109mix )
-  def subst  A-E0半角/全角        = $ToggleIME
+  def subst  ZZenkaku           = $GRAVE_ACCENT
+  def subst  A-ZZenkaku         = $ToggleIME
   def subst  S-*_2              = $COMMERCIAL_AT
   def subst  S-*_6              = $CIRCUMFLEX_ACCENT
   def subst  S-*_7              = $AMPERSAND
@@ -135,8 +147,8 @@ else
     def subst S-*CircumflexAccent = $PLUS_SIGN
     def subst ~S-*RightSquareBracket = $REVERSE_SOLIDUS
     def subst S-*RightSquareBracket = $VERTICAL_LINE
-    def subst ~S-*E0半角/全角 = $GRAVE_ACCENT
-    def subst S-~A-*E0半角/全角 = $TILDE
+    def subst ~S-*ZZenkaku = $GRAVE_ACCENT
+    def subst S-~A-*ZZenkaku = $TILDE
     def subst ~S-~A-*CommercialAt = $LEFT_SQUARE_BRACKET
     def subst S-*CommercialAt = $LEFT_CURLY_BRACKET
     def subst ~S-*LeftSquareBracket = $RIGHT_SQUARE_BRACKET
@@ -145,8 +157,8 @@ else
     def subst ~S-*Colon = $APOSTROPHE
     def subst S-*Colon = $QUOTATION_MARK
     #def subst ~S-*Z13 = LWindows
-    def subst ~S-*Z13 = *E0半角/全角
-    def subst A-*E0半角/全角 = E0半角/全角
+    def subst ~S-*Z13 = *ZZenkaku
+    def subst A-*ZZenkaku = ZZenkaku
 
     mod shift += E0RightShift
     key *E0RightShift = *LeftShift
@@ -178,8 +190,8 @@ def option delay-of !!! = 5
 
 #  Modifier:    {{{
 ## ctrl
- mod ctrl     += E0英数
- key *E0英数  = *LeftControl
+ mod ctrl     += ZEisuu
+ key *ZEisuu  = *LeftControl
 
 if ( KILL_CTRL )
   mod ctrl    -= LeftControl
@@ -192,11 +204,11 @@ endif
 if ( USE104on109mix )
   if ( WORKAROUND104 )
     mod ctrl    -= LeftControl
-    key *LeftControl = *E0半角/全角
+    key *LeftControl = *ZZenkaku
   endif
   if ( MOD_2 )
-    #mod mod2 += !!E0半角/全角
-    #key R-*E0半角/全角 = &Ignore
+    #mod mod2 += !!ZZenkaku
+    #key R-*ZZenkaku = &Ignore
     #key M2-*S = ScrollLock
   endif
   
@@ -291,7 +303,7 @@ endif
 if ( SANDS )
   mod shift    += !!Space
   #mod shift    += !!!Space
-  #key R-*Space = &Ignore
+  key R-*Space = &Ignore
 endif
 
 if ( USE104on109mix )
@@ -308,23 +320,21 @@ endif
 #}}}
 #  Swap:      {{{
 
-# * swap Esc for E0半角/全角
+# * swap Esc for 半角/全角
 #
 if ( USE104on109mix )
-  #def subst *Esc   = *E0半角/全角
+  #def subst *Esc   = *ZZenkaku
   if ( HHKBpro )
-    # def subst ~S-*E0半角/全角 = GraveAccent
-    # def subst S-*E0半角/全角  = BackQuote
-    key ~S-*E0半角/全角 = $GRAVE_ACCENT
-    key S-*E0半角/全角  = $TILDE
+    # def subst ~S-*ZZenkaku = GraveAccent
+    # def subst S-*ZZenkaku  = BackQuote
   else
-    # def subst *E0半角/全角  = *Esc
+    # def subst *ZZenkaku  = *Esc
   endif
   if ( HHKBproTypeS )
-    # key *E0半角/全角      = &SetImeStatus(off)
+    # key *ZZenkaku      = &SetImeStatus(off)
   #else
-  #  def subst ~S-*E0半角/全角 = $GRAVE_ACCENT
-  #  def subst S-*E0半角/全角  = $TILDE
+  #  def subst ~S-*ZZenkaku = $GRAVE_ACCENT
+  #  def subst S-*ZZenkaku  = $TILDE
   endif
 endif
 
@@ -406,30 +416,34 @@ endif
 # * [refered to default.mayu]
 #
  key ~M0-S-A-A  = &WindowClingToLeft  #ウィンドウを左に寄せる
- key M0-A  = &WindowClingToLeft
+#key M0-A  = &WindowClingToLeft
  key ~M0-S-A-E  = &WindowClingToRight #ウィンドウを右に寄せる
- #key M0-E  = &WindowClingToRight
- key M0-W  = &WindowClingToRight
+#key M0-E  = &WindowClingToRight
+#key M0-W  = &WindowClingToRight
  key ~M0-S-A-P  = &WindowClingToTop #ウィンドウを上に寄せる
- key M0-P  = &WindowClingToTop
+#key M0-P  = &WindowClingToTop
  key ~M0-S-A-N  = &WindowClingToBottom  #ウィンドウを下に寄せる
- key M0-N  = &WindowClingToBottom
+#key M0-N  = &WindowClingToBottom
  key ~M0-S-A-F  = &WindowClingToTop #ウィンドウを上に寄せる
- key M0-F  = &WindowClingToTop
+#key M0-F  = &WindowClingToTop
  key ~M0-S-A-C  = &WindowClingToBottom  #ウィンドウを下に寄せる
- key M0-C  = &WindowClingToBottom
+#key M0-C  = &WindowClingToBottom
  key ~M0-S-A-Left = &WindowMove(-16, 0) #ウィンドウの移動
- key M0-Left = &WindowMove(-16, 0)
+#key M0-Left = &WindowMove(-16, 0)
  key ~M0-S-A-Right= &WindowMove(16, 0)  # 〃
- key M0-Right= &WindowMove(16, 0)
+#key M0-Right= &WindowMove(16, 0)
  key ~M0-S-A-Up   = &WindowMove(0, -16) # 〃
- key M0-Up   = &WindowMove(0, -16)
+#key M0-Up   = &WindowMove(0, -16)
  key ~M0-S-A-Down = &WindowMove(0, 16)  # 〃
- key M0-Down = &WindowMove(0, 16)
+#key M0-Down = &WindowMove(0, 16)
+ key ~M0-C-A-_0   = &WindowMoveTo(SW, 700, 0)   #画面中央下部(1920x1080)くらい
+ key ~M0-C-A-_1   = &WindowMoveTo(SW, 444, 0)
  key ~M0-C-A-S-L  = &WindowLower    #ウィンドウを一番下へ
  key ~M0-C-A-S-R  = &WindowRaise    #ウィンドウを一番上へ
  key ~M0-C-A-S-H  = &WindowHMaximize  # ウィンドウを横方向に最大化
  key ~M0-C-A-S-V  = &WindowVMaximize  # ウィンドウを縦方向に最大化
+
+ key ~M0-S-A-_1 = &WindowMonitorTo(current, 1)
 
  key M0-~C-S-A-H  = &WindowMove(-16, 0) #ウィンドウの移動
  key M0-~C-S-A-L  = &WindowMove(16, 0)  # 〃
@@ -460,6 +474,11 @@ endif
 
  key A-F10  = &Sync &WindowMaximize
  key A-F5   = &Sync &WindowMinimize
+
+ key M0-C-_1  = &WindowResizeTo(635, 395) # diary
+ key M0-C-_2  = &WindowResizeTo(726, 449) # explore
+ key M0-C-_3  = &WindowResizeTo(1055, 667)
+ key M0-C-_4  = &WindowResizeTo(1320, 690)
 
 #}}}
 #  Mouse Emulate    {{{
@@ -526,8 +545,8 @@ keymap custommap : myGlobal
  key M0-S-Space = Apps
  key M0-r = F2
  key M0-s = ScrollLock
- key M0-*p = *PrintScreen
- key M0-n = NumLock
+#key M0-*p = *PrintScreen
+#key M0-n = NumLock
 
 #key C-*IC-S-Space  = $ToggleIME  # prefix S added because of SANDS
 
@@ -646,9 +665,11 @@ keymap emacslike : custommap
 #key *M0-S-C-F    = S-Right   # →(選択)
 #key *M0-S-C-N    = S-Down    # ↓(選択)
 #key *M0-S-C-P    = S-Up      # ↑(選択)
-#
-#key S-C-V    = S-Next    # 次頁(選択)
-#key S-M-V    = S-Prior   # 前頁(選択)
+
+#key C-V      = Next
+#key M-V      = Prior
+ key S-C-V    = S-Next    # 次頁(選択)
+ key S-M-V    = S-Prior   # 前頁(選択)
 
 keymap emacsedit : emacslike
  key C-A-O    = $openlinereturn
@@ -692,9 +713,25 @@ keymap emacsedit : emacslike
 #key F18DOWN    = &VK(RButton)
 #key R-F18    = &Ignore
 #key F18UP    = &VK(U-RButton)
-#key C-Z14    = C-V
+#key C-F14    = C-V
 
 #}}}
+
+keymap2 devenv_M : emacslike
+ key C-A = C-M C-A # Edit.CollapseAllOutlining
+ key C-X = C-M C-X # Edit.ExpandAllOutlining
+ key C-M = C-M C-M # Edit.ToggleOutliningExpansion
+ key C-O = C-M C-O # Edit.CollapsetoDefinitions
+ key C-L = C-M C-L # Edit.ToggleAllOutlining
+ key C-U = C-M C-U # Edit.StopHidingCurrent
+ key O = C-M O # アウトライン-定義に折りたたむ
+keymap2 devenv_K : emacslike
+ key C-I = C-K C-I # Edit.QuickInfo
+ key C-D = C-K C-D # Edit.FormatDocument
+ key C-F = C-K C-F # Edit.FormatSelection
+ key C-C = C-K C-C # Edit.CommentSelection
+ key C-U = C-K C-U # Edit.UncommentSelection
+ key C-K = C-K C-K # 編集.EOLまで削除
 
 window window-select /:window-select:SysListView32$/ : emacslike
 #  window-select plugin   {{{
@@ -752,6 +789,9 @@ window cyg_mintty /mintty\.exe/ : custommap
 window firefox /firefox\.exe/ : custommap
 #key C-G    = C-K     # focus search bar
 
+### * qutebrowser
+window qutebrowser /qutebrowser\.exe/ : custommap
+
 ### * GoogleChrome
 window googlechrome /chrome\.exe/ : emacsedit
 
@@ -790,22 +830,6 @@ window opera /opera\.exe/ : emacslike
 #window sylera /sylera\.exe/ : emacslike
 
 ### * Visual Studio
-keymap2 devenv_M
- key C-A = C-M C-A # Edit.CollapseAllOutlining
- key C-X = C-M C-X # Edit.ExpandAllOutlining
- key C-M = C-M C-M # Edit.ToggleOutliningExpansion
- key C-O = C-M C-O # Edit.CollapsetoDefinitions
- key C-L = C-M C-L # Edit.ToggleAllOutlining
- key C-U = C-M C-U # Edit.StopHidingCurrent
- key O = C-M O # アウトライン-定義に折りたたむ
-keymap2 devenv_K
- key C-I = C-K C-I # Edit.QuickInfo
- key C-D = C-K C-D # Edit.FormatDocument
- key C-F = C-K C-F # Edit.FormatSelection
- key C-C = C-K C-C # Edit.CommentSelection
- key C-U = C-K C-U # Edit.UncommentSelection
- key C-K = C-K C-K # 編集.EOLまで削除
-
 window devenv /devenv\.exe/ : emacslike
  key C-J = &Default # Edit.ListMembers
  key C-M = &Prefix(devenv_M)
@@ -816,6 +840,8 @@ window visualstudio /WDExpress\.exe/ : emacslike
  key C-M = &Prefix(devenv_M)
  key C-K = &Prefix(devenv_K)
 #key C-Semicolon = &Prefix(devenv_K)
+
+window teraterm /ttermpro\.exe/ : custommap
 
 #}}}
 
