@@ -1,0 +1,18 @@
+- dual function key parameters
+	- 250: Adjust time to start 'when help' action
+	- 80: Adjust overlap threshold between dual-function key and subsequent key
+- super keys parameters
+	- 250: Adjust time to wait for next press, after which the key will emit...
+	- 20: Adjust repeat time interval between the emmision of holded keys after...
+	- 500: Adjust time between first and subsequent emmisions of holded keys after...
+	- 200: Adjust time to trigger a hold when the superkey is held for that period, after it, ...
+- mouse speed
+	- 1: initial speed
+	- 1: Delay between steps
+	- 40: Overall speed limit
+- mouse acceleration
+	- 3: Incremental acceleration
+	- 15: Acceleration delay between steps
+- wheel speed
+	- 1: Wheel speed
+	- 120: Wheel delay between steps
