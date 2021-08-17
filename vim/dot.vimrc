@@ -166,7 +166,69 @@ function! s:_F_ToggleAbsRelNumber(setmode)
 endfunction
 
 "}}}
+function! s:_F_ColorizeColumns() "{{{
+  if &textwidth == 0
+    return
+  endif
+  let rng = range(1, &textwidth, 4)[1:]
+  let b = 0
+  let n = 0
+  let list = []
+  for i in range(1, &textwidth)
+    if len(rng) >= n + 1
+      if i == rng[n]
+        let b = !b
+        let n = n + 1
+      endif
+      if b == 1
+        call add(list, i)
+      endif
+    endif
+  endfor
+  execute "set colorcolumn=" . join(list, ',')
+endfunction
+
+"}}}
+function! s:_F_GetVisualLineBlock() "{{{
+  let [lstart, cstart] = getpos("'<")[1:2]
+  let [lend, cend] = getpos("'>")[1:2]
+  if lstart != lend
+    return ''
+  endif
+  let str = getline(lstart)[cstart - 1:cend]
+  if len(str) == 0
+    return ''
+  endif
+  return str
+endfunction
+
+"}}}
+function! s:_F_GetNumberString(str, from, to) "{{{
+  if a:from == a:to
+    return ''
+  endif
+  if a:from == "hex"
+    return printf(a:to=="binary"?"0b%b":"%d", a:str[0:1] == "0x" ? a:str : "0x".a:str)
+  elseif a:from == "binary"
+    return printf(a:to=="hex"?"0x%X":"%d", a:str[0:1] == "0b" ? a:str : "0b".a:str)
+  else " dec
+    return printf(a:to=="binary"?"0b%b":"0x%X", a:str)
+  endif
+endfunction
+
+"}}}
+function! s:_F_VarExists(var, val) "{{{
+    if exists(a:var) | return a:val | else | return '' | endif
+endfunction
+
+"}}}
+
 "" [Public Function]
+function! F_GetVisualBlockNumber(from, to) "{{{
+  return <SID>_F_GetNumberString(<SID>_F_GetVisualLineBlock(), a:from, a:to)
+endfunction
+
+"}}}
 
 "" [Character Encoding]
 "" Detect character encoding automatically "{{{
@@ -183,70 +245,70 @@ if !has('iconv')
 endif
 
 "(See KaWaZ[http://www.kawaz.jp/pukiwiki/?vim#cb691f26])"{{{
-"if &encoding !=# 'utf-8'
-"  set encoding=japan
-"  set fileencoding=japan
-"endif
-"if has('iconv')
-"  let s:enc_euc = 'euc-jp'
-"  let s:enc_jis = 'iso-2022-jp'
-"  " iconvがeucJP-msに対応しているかをチェック
-"  if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
-"    let s:enc_euc = 'eucjp-ms'
-"    let s:enc_jis = 'iso-2022-jp-3'
-"  " iconvがJISX0213に対応しているかをチェック
-"  elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-"    let s:enc_euc = 'euc-jisx0213'
-"    let s:enc_jis = 'iso-2022-jp-3'
-"  endif
-"  " fileencodingsを構築
-"  if &encoding ==# 'utf-8'
-"    let s:fileencodings_default = &fileencodings
-"    let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
-"    let &fileencodings = &fileencodings .','. s:fileencodings_default
-"    unlet s:fileencodings_default
-"  else
-"    let &fileencodings = &fileencodings .','. s:enc_jis
-"    set fileencodings+=utf-8,ucs-2le,ucs-2
-"    if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
-"      set fileencodings+=cp932
-"      set fileencodings-=euc-jp
-"      set fileencodings-=euc-jisx0213
-"      set fileencodings-=eucjp-ms
-"      let &encoding = s:enc_euc
-"      let &fileencoding = s:enc_euc
-"    else
-"      let &fileencodings = &fileencodings .','. s:enc_euc
-"    endif
-"  endif
-"  " 定数を処分
-"  unlet s:enc_euc
-"  unlet s:enc_jis
-"endif
-"" 日本語を含まない場合は fileencoding に encoding を使うようにする
-"if has('autocmd')
-"  function! AU_ReCheck_FENC()
-"    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
-"      let &fileencoding=&encoding
-"    endif
-"  endfunction
-"  autocmd BufReadPost * call AU_ReCheck_FENC()
-"endif"}}}
+if &encoding !=# 'utf-8'
+  set encoding=japan
+  set fileencoding=japan
+endif
+if has('iconv')
+  let s:enc_euc = 'euc-jp'
+  let s:enc_jis = 'iso-2022-jp'
+  " iconvがeucJP-msに対応しているかをチェック
+  if iconv("\x87\x64\x87\x6a", 'cp932', 'eucjp-ms') ==# "\xad\xc5\xad\xcb"
+    let s:enc_euc = 'eucjp-ms'
+    let s:enc_jis = 'iso-2022-jp-3'
+  " iconvがJISX0213に対応しているかをチェック
+  elseif iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
+    let s:enc_euc = 'euc-jisx0213'
+    let s:enc_jis = 'iso-2022-jp-3'
+  endif
+  " fileencodingsを構築
+  if &encoding ==# 'utf-8'
+    let s:fileencodings_default = &fileencodings
+    let &fileencodings = s:enc_jis .','. s:enc_euc .',cp932'
+    let &fileencodings = &fileencodings .','. s:fileencodings_default
+    unlet s:fileencodings_default
+  else
+    let &fileencodings = &fileencodings .','. s:enc_jis
+    set fileencodings+=utf-8,ucs-2le,ucs-2
+    if &encoding =~# '^\(euc-jp\|euc-jisx0213\|eucjp-ms\)$'
+      set fileencodings+=cp932
+      set fileencodings-=euc-jp
+      set fileencodings-=euc-jisx0213
+      set fileencodings-=eucjp-ms
+      let &encoding = s:enc_euc
+      let &fileencoding = s:enc_euc
+    else
+      let &fileencodings = &fileencodings .','. s:enc_euc
+    endif
+  endif
+  " 定数を処分
+  unlet s:enc_euc
+  unlet s:enc_jis
+endif
+" 日本語を含まない場合は fileencoding に encoding を使うようにする
+if has('autocmd')
+  function! AU_ReCheck_FENC()
+    if &fileencoding =~# 'iso-2022-jp' && search("[^\x01-\x7e]", 'n') == 0
+      let &fileencoding=&encoding
+    endif
+  endfunction
+  autocmd BufReadPost * call AU_ReCheck_FENC()
+endif"}}}
 " 改行コードの自動認識
-"set fileformats=dos,unix,mac
+set fileformats=dos,unix,mac
 " □とか○の文字があってもカーソル位置がずれないようにする
 if exists('&ambiwidth')
   set ambiwidth=double
 endif
 
 "set default encoding if on windows
-if s:is_win()
-  augroup DefaultFileencodingFileFormat
-    autocmd!
-    autocmd BufNewFile * set fileencoding=cp932
-    autocmd BufNewFile * set fileformat=dos
-  augroup END
-endif
+"if s:is_win()
+"  augroup DefaultFileencodingFileFormat
+"    autocmd!
+"    autocmd BufNewFile * set fileencoding=cp932
+"    autocmd BufNewFile * set fileformat=dos
+"  augroup END
+"endif
 
 
 "}}}
@@ -411,8 +473,8 @@ set autoread
 
 "}}}
 "" Number {{{
-set numberwidth=5
-"set number
+"set numberwidth=5
+set number
 set relativenumber
 "}}}
 "" Window behavior"{{{
@@ -549,6 +611,7 @@ nnoremap <silent> <special> <C-:>   :<C-u>put! =strftime('%Y%m%dT%H%M%S')<CR>
 "}}}
 "" Toggle option number {{{
 nnoremap <silent> [Tag]n  :<C-u>call <SID>Toggle_option('number')<CR>
+nnoremap <silent> [Tag]N  :<C-u>call <SID>Toggle_option('relativenumber')<CR>
 
 "}}}
 ""  {{{
@@ -629,7 +692,6 @@ nnoremap <silent> [Tag]q  :<C-u>call <SID>Toggle_open_quickfix(v:count)<CR>
 
 "}}}
 "" Compile/Make {{{
-  "+ must install ctags in your system
 if has('unix')
   nnoremap <silent> [Tag]x    :!(gcc -Wall -I$HOME/include %:p) 2>&1<CR>
     "+ TODO: want to display in :clist by using tmpname()
@@ -648,7 +710,7 @@ nnoremap [Tag]k :cprevious<CR>
 "nnoremap <silent> [p        :ptag <C-r><C-w><cr>
 
 "}}}
-"" Open/Close folds (1 level nested) {{{
+"" Open/Close folds {{{
 nnoremap <silent> [Tag]z      za
 nnoremap <silent> [Tag]<Space>  za
 nnoremap <silent> [Tag]f :foldopen!<CR>
@@ -675,9 +737,10 @@ nnoremap <silent> [Tag]P  "+P
 
 "}}}
 "" For ChangeLog {{{
-nnoremap <silent> <special> <F5>  <Esc>O<Esc>"=strftime('%Y-%m-%dT%H:%M:%S')
-                \ <CR>p$a:<Esc>:put =fnamemodify(getcwd(), ':t')
-                \ <CR>kJo<TAB>* 
+"nnoremap <silent> <special> <F5>  <Esc>O<Esc>"=strftime('%Y-%m-%dT%H:%M:%S')
+"                \ <CR>p$a:<Esc>:put =fnamemodify(getcwd(), ':t')
+"                \ <CR>kJo<TAB>* 
+nnoremap <silent> <special> <F5>  <Esc>O* <Esc>"=strftime('%Y-%m-%dT%H:%M:%S')<CR>po
 
 "}}}
 "" For update/reload vimrc {{{
@@ -765,6 +828,15 @@ nnoremap <silent> ,r :setlocal nomodifiable noswapfile readonly<CR>
 nnoremap <silent> ,R :setlocal modifiable swapfile noreadonly<CR>
 nnoremap <silent> ,a :setlocal virtualedit=all<CR>
 nnoremap <silent> ,A :setlocal virtualedit=<CR>
+"" Show Number {{{
+vnoremap <silent> <C-g> :<C-u>echo "bD: " . F_GetVisualBlockNumber('binary', '')
+                              \ . "\r\nhD: " . F_GetVisualBlockNumber('hex', '')
+                              \ . "\r\nbH: " . F_GetVisualBlockNumber('binary', 'hex')
+                              \ . "\r\ndH: " . F_GetVisualBlockNumber('', 'hex')
+                              \ . "\r\ndB: " . F_GetVisualBlockNumber('', 'binary')
+                              \ . "\r\nhB: " . F_GetVisualBlockNumber('hex', 'binary')
+                              \ <CR>
+"}}}
 
 "" [plugin settings] (built-in, external command or my defined)
 "" changelog {{{
@@ -792,6 +864,9 @@ endif
 "}}}
 
 "" [plugins] (local-additions)
+"if has('syntax') && has('eval')
+"  packadd! matchit
+"endif
 "" vundle {{{
 if has('unix')
   let s:bundlebase = expand("$HOME/.vim/bundle")
@@ -841,6 +916,8 @@ let g:airline#extensions#tabline#enabled = 1
 "let g:airline#extensions#tabline#left_sep = ' '
 "let g:airline#extensions#tabline#left_alt_sep = '|'
 "}}}
+"Plugin 'danilo-augusto/vim-afterglow' "{{{
+"}}}
 "" manpageview.vim {{{
 "let g:manpageview_options="-S 3p"
 "nnoremap <silent>    K       :Man <cword>
@@ -888,32 +965,32 @@ endif
 "let g:howm_findprg = '/usr/bin/find'
 
 "}}}
-Plugin 'vim-scripts/L9' "{{{
+"Plugin 'vim-scripts/L9' "{{{
 "}}}
-Plugin 'vim-scripts/FuzzyFinder' "{{{
+"Plugin 'vim-scripts/FuzzyFinder' "{{{
 " The prefix key with fuzzyfinder.vim
-nnoremap      [FUFTag]  <Nop>
-nmap        <C-q>   [FUFTag]
-"let g:FuzzyFinderOptions.Base.key_open=<CR>      "default
-"let g:FuzzyFinderOptions.Base.key_open_split=<C-j>
-nnoremap <silent> [FUFTag]<C-n>   :FufBuffer<CR>
-nnoremap <silent> [FUFTag]<C-m>   :FufFile 
-        \ <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
-"nnoremap <silent> [FUFTag]<C-j>   :FufMruFile<CR>
-"nnoremap <silent> [FUFTag]<C-k>   :FufMruCmd<CR>
-nnoremap <silent> [FUFTag]<C-p>   :FufDir 
-        \ <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
+"nnoremap      [FUFTag]  <Nop>
+"nmap        <C-q>   [FUFTag]
+""let g:FuzzyFinderOptions.Base.key_open=<CR>      "default
+""let g:FuzzyFinderOptions.Base.key_open_split=<C-j>
+"nnoremap <silent> [FUFTag]<C-n>   :FufBuffer<CR>
+"nnoremap <silent> [FUFTag]<C-m>   :FufFile 
+"        \ <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
+""nnoremap <silent> [FUFTag]<C-j>   :FufMruFile<CR>
+""nnoremap <silent> [FUFTag]<C-k>   :FufMruCmd<CR>
+"nnoremap <silent> [FUFTag]<C-p>   :FufDir 
+"        \ <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
 
 "}}}
-Plugin 'vim-scripts/taglist.vim' "{{{
-nnoremap <silent> [Tag]<C-t>  :TlistToggle<CR>
-"let Tlist_Exit_OnlyWindow = 1
-let Tlist_File_Fold_Auto_Close = 1
-"let Tlist_Use_Right_Window = 1
+"Plugin 'vim-scripts/taglist.vim' "{{{
+"nnoremap <silent> [Tag]<C-t>  :TlistToggle<CR>
+""let Tlist_Exit_OnlyWindow = 1
+"let Tlist_File_Fold_Auto_Close = 1
+""let Tlist_Use_Right_Window = 1
 
 "}}}
-Plugin 'vim-scripts/tagexplorer.vim' "{{{
-nnoremap <silent> <F11>  :TagExplorer<CR>
+"Plugin 'vim-scripts/tagexplorer.vim' "{{{
+"nnoremap <silent> <F11>  :TagExplorer<CR>
 
 "}}}
 Plugin 'majutsushi/tagbar' "{{{
@@ -929,14 +1006,14 @@ let g:tagbar_sort = 0
 "set makeprg=LANGUAGE=C\ make
 
 "}}}
-Plugin 'vim-scripts/QuickBuf' "{{{
-let g:qb_hotkey = ",<LT>"
+"Plugin 'vim-scripts/QuickBuf' "{{{
+"let g:qb_hotkey = ",<LT>"
 
 "}}}
-Plugin 'othree/vim-autocomplpop' "{{{
-let g:acp_enableAtStartup = 0
-let g:acp_behaviorRubyOmniMethodLength = -1
-let g:acp_behaviorRubyOmniSymbolLength = -1
+"Plugin 'othree/vim-autocomplpop' "{{{
+"let g:acp_enableAtStartup = 0
+"let g:acp_behaviorRubyOmniMethodLength = -1
+"let g:acp_behaviorRubyOmniSymbolLength = -1
 
 "}}}
 "" OmniCppComplete {{{
@@ -957,12 +1034,12 @@ let g:acp_behaviorRubyOmniSymbolLength = -1
 "}}}
 "" tags for std c++ {{{
 "See http://www.vim.org/scripts/script.php?script_id=2358
-if has('unix')
-  set tags+=$HOME/.vim/tags/cpp_src/cpp
-elseif s:is_win()
-  set tags+=$HOME/vimfiles/tags/cpp_src/cpp
-endif
-map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+"if has('unix')
+"  set tags+=$HOME/.vim/tags/cpp_src/cpp
+"elseif s:is_win()
+"  set tags+=$HOME/vimfiles/tags/cpp_src/cpp
+"endif
+"map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 
 "}}}
 "" vim-pathogen {{{
@@ -1010,29 +1087,29 @@ nmap z/ <Plug>AutoHighlightToggle
 "}}}
 Plugin 't9md/vim-quickhl' "{{{
 "}}}
-Plugin 'easymotion/vim-easymotion' "{{{
+"Plugin 'easymotion/vim-easymotion' "{{{
 "}}}
-Plugin 'haya14busa/incsearch.vim' "{{{
-if exists("g:incsearch#auto_nohlsearch")
-  nmap / <Plug>(incsearch-forward)
-  nmap ? <Plug>(incsearch-backward)
-  nmap g/ <Plug>(incsearch-stay)
+"Plugin 'haya14busa/incsearch.vim' "{{{
+"if exists("g:incsearch#auto_nohlsearch")
+"  nmap / <Plug>(incsearch-forward)
+"  nmap ? <Plug>(incsearch-backward)
+"  nmap g/ <Plug>(incsearch-stay)
+"
+"  let g:incsearch#auto_nohlsearch = 1
+"  nmap n  <Plug>(incsearch-nohl-n)
+"  nmap N  <Plug>(incsearch-nohl-N)
+"  nmap *  <Plug>(incsearch-nohl-*)
+"  nmap #  <Plug>(incsearch-nohl-#)
+"  nmap g* <Plug>(incsearch-nohl-g*)
+"  nmap g# <Plug>(incsearch-nohl-g#)
+"endif
 
-  let g:incsearch#auto_nohlsearch = 1
-  nmap n  <Plug>(incsearch-nohl-n)
-  nmap N  <Plug>(incsearch-nohl-N)
-  nmap *  <Plug>(incsearch-nohl-*)
-  nmap #  <Plug>(incsearch-nohl-#)
-  nmap g* <Plug>(incsearch-nohl-g*)
-  nmap g# <Plug>(incsearch-nohl-g#)
-endif
-
 "}}}
-Plugin 'rhysd/clever-f.vim' "{{{
-let g:clever_f_across_no_line = 1
-"let g:clever_f_smart_case = 1
-let g:clever_f_ignore_case = 0
-"}}}
+" Plugin 'rhysd/clever-f.vim' "{{{
+" let g:clever_f_across_no_line = 1
+" "let g:clever_f_smart_case = 1
+" let g:clever_f_ignore_case = 0
+" "}}}
 Plugin 'tpope/vim-surround' "{{{
 "}}}
 Plugin 'luochen1990/rainbow' "{{{
@@ -1042,23 +1119,15 @@ Plugin 'ciaranm/inkpot' "{{{
 "}}}
 Plugin 'tomasr/molokai' "{{{
 "}}}
-Plugin 'altercation/vim-colors-solarized' "{{{
-"}}}
 Plugin 'w0ng/vim-hybrid' "{{{
 "}}}
 Plugin 'sjl/badwolf' "{{{
-"}}}
-Plugin 'nanotech/jellybeans.vim' "{{{
-"}}}
-Plugin 'antlypls/vim-colors-codeschool' "{{{
 "}}}
 Plugin 'gilgigilgil/anderson.vim' "{{{
 "}}}
 Plugin 'wellsjo/wellsokai.vim' "{{{
 "}}}
-Plugin 'dfxyz/CandyPaper.vim' "{{{
-"}}}
-Plugin 'vim-scripts/paintbox' "{{{
+"Plugin 'dfxyz/CandyPaper.vim' "{{{
 "}}}
 Plugin 'Haron-Prime/Antares' "{{{
 "}}}
@@ -1076,17 +1145,14 @@ Plugin 'vim-scripts/BlockDiff' "{{{
 "}}}
 Plugin 'rhysd/vim-color-spring-night' "{{{
 "}}}
-Plugin 'tpope/vim-fugitive' "{{{
+"Plugin 'tpope/vim-fugitive' "{{{
 "}}}
 Plugin 'rust-lang/rust.vim' "{{{
+let g:rustfmt_autosave = 1
 "}}}
-Plugin 'PProvost/vim-ps1' "{{{
-"}}}
-"Plugin 'danilo-augusto/vim-afterglow' "{{{
+"Plugin 'PProvost/vim-ps1' "{{{
 "}}}
 "Plugin 'tomasiser/vim-code-dark' "{{{
-"}}}
-Plugin 'reewr/vim-monokai-phoenix' "{{{
 "}}}
 "Plugin 'ltlollo/diokai' "{{{
 "}}}
@@ -1095,8 +1161,6 @@ Plugin 'reewr/vim-monokai-phoenix' "{{{
 Plugin 'juanpabloaj/vim-pixelmuerto' "{{{
 "}}}
 Plugin 'tyrannicaltoucan/vim-quantum' "{{{
-"}}}
-Plugin 'fatih/vim-go' "{{{
 "}}}
 " vim-script/diffchar.vim "{{{
 "let g:DiffModeSync=
@@ -1108,6 +1172,14 @@ Plugin 'fatih/vim-go' "{{{
 Plugin 'sgeb/vim-diff-fold' "{{{
 "}}}
 Plugin 'NLKNguyen/papercolor-theme' "{{{
+"}}}
+Plugin 'neoclide/coc.nvim' "{{{
+let g:coc_start_at_startup = 0
+inoremap <silent><expr> <C-Space> coc#refresh()
+"}}}
+Plugin 'fedorenchik/gtags.vim' "{{{
+"}}}
+Plugin 'chrisbra/matchit' "{{{
 "}}}
 call vundle#end()
 endif
@@ -1133,7 +1205,7 @@ endif
   "+ (See http://vim-users.jp/2009/08/hack64/)
 
 "}}}
-colorscheme zenburn
+colorscheme desert
 
 "" [Look and feel]
 "" Appear blanks {{{
@@ -1194,7 +1266,16 @@ set laststatus=2
 set ruler
 set showcmd
 set noshowmode
-set statusline=%<\ %f\ %(\ [%M%R%H%W]%)[%{&enc}/%{&fenc}/%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ %=%vC,%l/%L\ [%{exists('w:locksw')?'L,':''}%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'}]\ %y
+set statusline=%n:
+set statusline+=%<\ %f\ %(\ [%M%R%H%W]%)[%{&enc}/%{&fenc}/%{&ff=='unix'?'LF':&ff=='dos'?'CRLF':'CR'}]\ 
+set statusline+=%=
+"set statusline+=[%{F_GetVisualBlockNumber('binary','')}
+"set statusline+=/%{F_GetVisualBlockNumber('hex','')}
+"set statusline+=/%{F_GetVisualBlockNumber('binary','hex')}
+"set statusline+=/%{F_GetVisualBlockNumber('','hex')}
+"set statusline+=/%{F_GetVisualBlockNumber('','binary')}
+"set statusline+=/%{F_GetVisualBlockNumber('hex','binary')}]\ 
+set statusline+=%l/%LL,%vC\ [%{exists('w:locksw')?'L,':''}%{&ts}T,%{&sts}t,%{&sw}>,%{&et==1?'et':'!et'},%{&ai==1?'ai':'!ai'}]%y
 
 "}}}
 "" Highlight the current line {{{
@@ -1219,29 +1300,32 @@ endif
 augroup RemarkableMarker_Exclaim
  autocmd!
  autocmd BufNewFile,BufRead *.{txt,todo,TODO}
-   \ syntax match Error /^\W\+!\ /he=e-1
+   \ syntax match Error /^\s\+!\s/he=e-1
 augroup END
 "highlight PlusRemark ctermbg=Blue guibg=Blue
 augroup RemarkableMarker_Plus
  autocmd!
  autocmd BufNewFile,BufRead *.{txt,todo,TODO}
-   \ syntax match DiffAdd /^\W\++\ /he=e-1
+   \ syntax match DiffAdd /^\s\++\s/he=e-1
 "   \ syntax match PlusRemark /^\W\++\ /he=e-1
 augroup END
-"augroup LowPriorityMarker
-" autocmd!
-" autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+augroup LowPriorityMarker
+ autocmd!
+ autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+   \ syntax match Conceal /^\s\+\/\s.*$/
+ autocmd BufNewFile,BufRead *.{txt,todo,TODO}
+   \ syntax region Conceal start="<del>" end="</del>"
+augroup END
 "   \ syntax match Error /^\W\++\ .*$/
-"augroup END
 
 "}}}
 "" show relativenumber {{{
-augroup ShowNumberAuto
- autocmd!
- "autocmd BufEnter * call <SID>_F_SetRelativeNumber()
- autocmd InsertLeave * call <SID>_F_ToggleAbsRelNumber("rnu")
- autocmd InsertEnter * call <SID>_F_ToggleAbsRelNumber("nu")
-augroup END
+"augroup ShowNumberAuto
+" autocmd!
+" "autocmd BufEnter * call <SID>_F_SetRelativeNumber()
+" autocmd InsertLeave * call <SID>_F_ToggleAbsRelNumber("rnu")
+" autocmd InsertEnter * call <SID>_F_ToggleAbsRelNumber("nu")
+"augroup END
 
 "}}}
 "" xml indentation {{{
@@ -1252,6 +1336,11 @@ augroup XmlIndentation
  autocmd FileType xml setlocal foldmethod=syntax foldlevel=2
 augroup END
 
+"}}}
+"" Colorize Columns {{{
+nnoremap <expr><silent> [Tag]C  exists('w:colorizecolumn') && &textwidth != 0
+  \ ? ':unlet w:colorizecolumn<CR> | :set colorcolumn=<CR>'
+  \ : ':let w:colorizecolumn=1<CR> | :call <SID>_F_ColorizeColumns()<CR>'
 "}}}
 
 " read after script
