@@ -415,43 +415,51 @@ endif
 #  Console Window   {{{
 # * [refered to default.mayu]
 #
- key ~M0-S-A-A  = &WindowClingToLeft  #ウィンドウを左に寄せる
+#key ~M0-S-A-A  = &WindowClingToLeft  #ウィンドウを左に寄せる
 #key M0-A  = &WindowClingToLeft
- key ~M0-S-A-E  = &WindowClingToRight #ウィンドウを右に寄せる
+#key ~M0-S-A-E  = &WindowClingToRight #ウィンドウを右に寄せる
 #key M0-E  = &WindowClingToRight
 #key M0-W  = &WindowClingToRight
- key ~M0-S-A-P  = &WindowClingToTop #ウィンドウを上に寄せる
+#key ~M0-S-A-P  = &WindowClingToTop #ウィンドウを上に寄せる
 #key M0-P  = &WindowClingToTop
- key ~M0-S-A-N  = &WindowClingToBottom  #ウィンドウを下に寄せる
+#key ~M0-S-A-N  = &WindowClingToBottom  #ウィンドウを下に寄せる
 #key M0-N  = &WindowClingToBottom
- key ~M0-S-A-F  = &WindowClingToTop #ウィンドウを上に寄せる
+#key ~M0-S-A-F  = &WindowClingToTop #ウィンドウを上に寄せる
 #key M0-F  = &WindowClingToTop
- key ~M0-S-A-C  = &WindowClingToBottom  #ウィンドウを下に寄せる
+#key ~M0-S-A-C  = &WindowClingToBottom  #ウィンドウを下に寄せる
 #key M0-C  = &WindowClingToBottom
- key ~M0-S-A-Left = &WindowMove(-16, 0) #ウィンドウの移動
+ key M0-A  = &WindowClingToLeft
+ key M0-G  = &WindowClingToRight
+ key M0-R  = &WindowClingToTop
+ key M0-V  = &WindowClingToBottom
+#key ~M0-S-A-Left = &WindowMove(-16, 0) #ウィンドウの移動
 #key M0-Left = &WindowMove(-16, 0)
- key ~M0-S-A-Right= &WindowMove(16, 0)  # 〃
+#key ~M0-S-A-Right= &WindowMove(16, 0)  # 〃
 #key M0-Right= &WindowMove(16, 0)
- key ~M0-S-A-Up   = &WindowMove(0, -16) # 〃
+#key ~M0-S-A-Up   = &WindowMove(0, -16) # 〃
 #key M0-Up   = &WindowMove(0, -16)
- key ~M0-S-A-Down = &WindowMove(0, 16)  # 〃
+#key ~M0-S-A-Down = &WindowMove(0, 16)  # 〃
 #key M0-Down = &WindowMove(0, 16)
- key ~M0-C-A-_0   = &WindowMoveTo(SW, 700, 0)   #画面中央下部(1920x1080)くらい
- key ~M0-C-A-_1   = &WindowMoveTo(SW, 444, 0)
- key ~M0-C-A-S-L  = &WindowLower    #ウィンドウを一番下へ
- key ~M0-C-A-S-R  = &WindowRaise    #ウィンドウを一番上へ
+ key M0-S = &WindowMove(-16, 0)
+ key M0-F = &WindowMove(16, 0)
+ key M0-E = &WindowMove(0, -16)
+ key M0-D = &WindowMove(0, 16)
+ key M0-_0   = &WindowMoveTo(SW, 700, 0)   #画面中央下部(1920x1080)くらい
+ key M0-_9   = &WindowMoveTo(SW, 444, 0)
+#key ~M0-C-A-S-L  = &WindowLower    #ウィンドウを一番下へ
+#key ~M0-C-A-S-R  = &WindowRaise    #ウィンドウを一番上へ
  key ~M0-C-A-S-H  = &WindowHMaximize  # ウィンドウを横方向に最大化
  key ~M0-C-A-S-V  = &WindowVMaximize  # ウィンドウを縦方向に最大化
 
  key ~M0-S-A-_1 = &WindowMonitorTo(current, 1)
 
- key M0-~C-S-A-H  = &WindowMove(-16, 0) #ウィンドウの移動
- key M0-~C-S-A-L  = &WindowMove(16, 0)  # 〃
- key M0-~C-S-A-K  = &WindowMove(0, -16) # 〃
- key M0-~C-S-A-J  = &WindowMove(0, 16)  # 〃
+#key M0-~C-S-A-H  = &WindowMove(-16, 0) #ウィンドウの移動
+#key M0-~C-S-A-L  = &WindowMove(16, 0)  # 〃
+#key M0-~C-S-A-K  = &WindowMove(0, -16) # 〃
+#key M0-~C-S-A-J  = &WindowMove(0, 16)  # 〃
 
 #key M0-W-Enter   = &WindowMonitor(0, true, false)
- key M0-C-T   = &Sync &WindowToggleTopMost &WindowSetAlpha(67)
+ key M0-T   = &Sync &WindowToggleTopMost &WindowSetAlpha(67)
 
 #}}}
 #  Console Cursor   {{{
@@ -475,10 +483,10 @@ endif
  key A-F10  = &Sync &WindowMaximize
  key A-F5   = &Sync &WindowMinimize
 
- key M0-C-_1  = &WindowResizeTo(635, 395) # diary
- key M0-C-_2  = &WindowResizeTo(726, 449) # explore
- key M0-C-_3  = &WindowResizeTo(1055, 667)
- key M0-C-_4  = &WindowResizeTo(1320, 690)
+ key M0-_1  = &WindowResizeTo(635, 395) # diary
+ key M0-_2  = &WindowResizeTo(726, 449) # explore
+ key M0-_3  = &WindowResizeTo(1055, 667)
+ key M0-_4  = &WindowResizeTo(1320, 690)
 
 #}}}
 #  Mouse Emulate    {{{
@@ -494,20 +502,19 @@ endif
 #key M0-S-A-K   = &MouseMove(0, -160)
 #key M0-S-A-H   = &MouseMove(-160, 0)
 #key M0-S-A-L   = &MouseMove(160, 0)
- key M0-*Comma = &VK(D-LButton) &Sync &VK(U-LButton)
- key M0-*Period = &VK(D-RButton) &Sync &VK(U-RButton)
+ key M0-*N = &VK(D-LButton) &Sync &VK(U-LButton)
+ key M0-*Comma = &VK(D-RButton) &Sync &VK(U-RButton)
  key M0-*M = &VK(D-MButton) &Sync &VK(U-MButton)
- key M0-*M = &VK(D-MButton) &Sync &VK(U-MButton)
- key M0-S-E = &MouseMove(0, -16)
- key M0-S-D = &MouseMove(0, 16)
- key M0-S-S = &MouseMove(-16, 0)
- key M0-S-F = &MouseMove(16, 0)
+#key M0-S-E = &MouseMove(0, -16)
+#key M0-S-D = &MouseMove(0, 16)
+#key M0-S-S = &MouseMove(-16, 0)
+#key M0-S-F = &MouseMove(16, 0)
 
 #}}}
 #  Misc.    {{{
  key C-~S-~A-*OpenBracket  = Esc
 #key C-*IC-OpenBracket  = Esc
- key M0-z  = S-A-z
+ key M0-Z  = S-A-Z
 
 #}}}
 
@@ -540,11 +547,11 @@ keymap custommap : myGlobal
  #my documents
  #key M0-E  = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,::{450D8FBA-AD25-11D0-98A8-0800361B1103}", , ShowNormal)
  #key M0-E  = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,%HOME%", , ShowNormal)
- key M0-E = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,::{59031a47-3f72-44a7-89c5-5595fe6b30ee}", , ShowNormal) # User Folder
+ key M0-X = &Sync &ShellExecute("open", "C:\\WINDOWS\\explorer.exe", "/n,::{59031a47-3f72-44a7-89c5-5595fe6b30ee}", , ShowNormal) # User Folder
  #open context menu
- key M0-S-Space = Apps
- key M0-r = F2
- key M0-s = ScrollLock
+ key M0-Space = Apps
+#key M0-r = F2
+#key M0-s = ScrollLock
 #key M0-*p = *PrintScreen
 #key M0-n = NumLock
 
