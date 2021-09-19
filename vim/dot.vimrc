@@ -1342,6 +1342,10 @@ nnoremap <expr><silent> [Tag]C  exists('w:colorizecolumn') && &textwidth != 0
   \ ? ':unlet w:colorizecolumn<CR> | :set colorcolumn=<CR>'
   \ : ':let w:colorizecolumn=1<CR> | :call <SID>_F_ColorizeColumns()<CR>'
 "}}}
+"" foldtext {{{
+"set foldtext=v:folddashes.substitute(getline(v:foldstart),'/\\*\\\|\\*/\\\|{{{\\d\\=','','g')
+set foldtext=substitute(getline(v:foldstart),'/\\*\\\|\\*/\\\|{{{\\d\\=','','g')
+"}}}
 
 " read after script
 runtime custom/after/vimrc
