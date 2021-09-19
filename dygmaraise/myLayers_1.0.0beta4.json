@@ -103,30 +103,24 @@
       "verbose": "Transparent"
     },
     {
-      "keyCode": 58,
-      "label": "F1"
+      "keyCode": 2078,
+      "label": "!"
     },
     {
-      "keyCode": 59,
-      "label": "F2"
+      "keyCode": 2079,
+      "label": "@"
     },
     {
-      "keyCode": 60,
-      "label": "F3"
+      "keyCode": 2080,
+      "label": "#"
     },
     {
-      "keyCode": 61,
-      "label": "F4"
+      "keyCode": 2081,
+      "label": "$"
     },
     {
-      "keyCode": 62,
-      "label": "F5"
-    },
-    {
-      "keyCode": 65535,
-      "label": "",
-      "extraLabel": "TRANS",
-      "verbose": "Transparent"
+      "keyCode": 2082,
+      "label": "%"
     },
     {
       "keyCode": 65535,
@@ -135,32 +129,38 @@
       "verbose": "Transparent"
     },
     {
-      "keyCode": 63,
-      "label": "F6"
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
-      "keyCode": 64,
-      "label": "F7"
+      "keyCode": 2083,
+      "label": "^"
     },
     {
-      "keyCode": 65,
-      "label": "F8"
+      "keyCode": 2084,
+      "label": "&"
     },
     {
-      "keyCode": 66,
-      "label": "F9"
+      "keyCode": 2085,
+      "label": "*"
     },
     {
-      "keyCode": 67,
-      "label": "F10"
+      "keyCode": 2086,
+      "label": "("
     },
     {
-      "keyCode": 68,
-      "label": "F11"
+      "keyCode": 2087,
+      "label": ")"
     },
     {
-      "keyCode": 69,
-      "label": "F12"
+      "keyCode": 2093,
+      "label": "_"
+    },
+    {
+      "keyCode": 2094,
+      "label": "+"
     },
     {
       "keyCode": 65535,
@@ -241,32 +241,22 @@
       "label": "="
     },
     {
-      "keyCode": 2094,
-      "label": "+"
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
-      "keyCode": 2093,
-      "label": "_"
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
-      "keyCode": 2078,
-      "label": "!"
-    },
-    {
-      "keyCode": 2079,
-      "label": "@"
-    },
-    {
-      "keyCode": 2080,
-      "label": "#"
-    },
-    {
-      "keyCode": 2081,
-      "label": "$"
-    },
-    {
-      "keyCode": 2082,
-      "label": "%"
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
       "keyCode": 65535,
@@ -287,24 +277,58 @@
       "verbose": "Transparent"
     },
     {
-      "keyCode": 2083,
-      "label": "^"
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
-      "keyCode": 2084,
-      "label": "&"
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
-      "keyCode": 2085,
-      "label": "*"
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
-      "keyCode": 2086,
-      "label": "("
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
-      "keyCode": 2087,
-      "label": ")"
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
+    },
+    {
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
+    },
+    {
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
+    },
+    {
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
+    },
+    {
+      "keyCode": 65535,
+      "label": "",
+      "extraLabel": "TRANS",
+      "verbose": "Transparent"
     },
     {
       "keyCode": 65535,
@@ -429,13 +453,13 @@
     15,
     15,
     15,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
-    5,
+    12,
+    12,
+    12,
+    12,
+    12,
+    12,
+    12,
     12,
     12,
     12,
@@ -466,11 +490,11 @@
     15,
     15,
     12,
-    5,
-    5,
-    5,
-    5,
-    5,
+    12,
+    12,
+    12,
+    12,
+    12,
     12,
     12,
     12,
