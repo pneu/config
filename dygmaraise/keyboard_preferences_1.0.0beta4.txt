@@ -4,16 +4,16 @@
 - super keys parameters
 	- 250: Adjust time to wait for next press, after which the key will emit...
 	- 20: Adjust repeat time interval between the emmision of holded keys after...
-	- 500: Adjust time between first and subsequent emmisions of holded keys after...
+	- 276: Adjust time between first and subsequent emmisions of holded keys after...
 	- 200: Adjust time to trigger a hold when the superkey is held for that period, after it, ...
 	- 20: Adjust percentage that changes the way the hold function will trigger depending...
 - mouse speed
 	- 2: initial speed
 	- 1: Delay between steps
-	- 25: Overall speed limit
+	- 53: Overall speed limit
 - mouse acceleration
 	- 1: Incremental acceleration
 	- 8: Acceleration delay between steps
 - wheel speed
 	- 1: Wheel speed
-	- 120: Wheel delay between steps
+	- 105: Wheel delay between steps

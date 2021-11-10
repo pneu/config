@@ -451,7 +451,7 @@ endif
  key ~M0-C-A-S-H  = &WindowHMaximize  # ウィンドウを横方向に最大化
  key ~M0-C-A-S-V  = &WindowVMaximize  # ウィンドウを縦方向に最大化
 
- key M0-F1 = &WindowMonitorTo(current, 1)
+ key M0-Q = &WindowMonitorTo(current, 1)
 
 #key M0-~C-S-A-H  = &WindowMove(-16, 0) #ウィンドウの移動
 #key M0-~C-S-A-L  = &WindowMove(16, 0)  # 〃
