@@ -1,6 +1,7 @@
 # local version: 2.5
 # You are recommended to take some symbols,
 #   -DUSE104on109mix;-DSANDS;-DMOD_0;-DMOD_0_HENKAN;-DHHKBproTypeS;-DKANA_TO_BS;-DTHUMB_BS
+#   -DUSE109;-DUSE104on109mix;-DUSENLS;-DSANDS;-DMOD_0_FF;-DTHUMB_CTRL;-DTHUMB_CTRL_ONESHOT;-DRELEASE_LALT;-DHHKBproTypeS;-DMOD3;-DMOD3_ONESHOT;-DKANA_ENTER
 #   -DUSE109;-DUSE104on109mix;-DUSENLS;-DSANDS;-DMOD_0_ENTER;-DTHUMB_CTRL;-DTHUMB_CTRL_ONESHOT;-DRELEASE_LALT;-DHHKBproTypeS;-DMOD3;-DMOD3_ONESHOT;-DKANA_IME_ON
 #
 # [symbols]
@@ -289,8 +290,8 @@ if ( USE104on109mix )
       key R-*Z13 = &Ignore
       key M0-*IL-*IC-Z13 = $ToggleIME  # Z13 needs to assign mod0
     else
-      mod shift += Z13
-      key *Z13 = *LeftShift
+      #mod shift += Z13
+      #key *Z13 = *LeftShift
     endif
     if ( MOD_0_HIRAGANA )
       mod mod0 += !!Z15
@@ -304,9 +305,9 @@ if ( USE104on109mix )
         if ( KANA_TO_BS )
           key *Z15= *BackSpace
         else
-          mod alt    += Z15
-          key *Z15  = *RightAlt
-          #key *Z15 = *Enter
+          #mod alt    += Z15
+          #key *Z15  = *RightAlt
+          ##key *Z15 = *Enter
         endif
       endif
     endif
@@ -356,6 +357,9 @@ endif
 
 if ( KANA_IME_ON )
   key Z15 = &SetImeStatus(on)
+endif
+if ( KANA_ENTER )
+  key *Z15 = *Enter
 endif
 
 if ( SANDS )
