@@ -10,7 +10,7 @@
 - mouse speed
 	- focus_instance.command("mouse.speed 2") // 2: initial speed
 	- focus_instance.command("mouse.speedDelay 1") // 1: Delay between steps
-	- focus_instance.command("mouse.speedLimit 53") // 53: Overall speed limit
+	- focus_instance.command("mouse.speedLimit 70") // 53: Overall speed limit
 - mouse acceleration
 	- focus_instance.command("mouse.accelSpeed 1") // 1: Incremental acceleration
 	- focus_instance.command("mouse.accelDelay 8") // 8: Acceleration delay between steps
