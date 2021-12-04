@@ -273,14 +273,66 @@ endif
 #key *Z14= *LeftAlt
 
 if ( MOD3 )
-  if ( MOD3_ONESHOT )
-    mod mod3 += !!LeftAlt
-    key R-*Z14 = &Ignore
-    key M3-*IL-*IC-LeftAlt = *&SetImeStatus(off)
-  else
-    mod mod3 += LeftAlt
-    key R-*LeftAlt = &Ignore
+  if ( RELEASE_LALT )
+    if ( MOD3_ONESHOT )
+      mod mod3 += !!LeftAlt
+      key R-*Z14 = &Ignore
+      key M3-*IL-*IC-LeftAlt = *&SetImeStatus(off)
+    else
+      mod mod3 += LeftAlt
+      key R-*LeftAlt = &Ignore
+    endif
   endif
+endif
+
+if ( MOD3 )
+  def subst ~M0-M3-*Semicolon = $EXCLAMATION_MARK # !
+  key ~M0-M3-*L = $COMMERCIAL_AT # @
+  key ~M0-M3-*K = $NUMBER_SIGN   # #
+  key ~M0-M3-*J = $DOLLAR_SIGN   # $
+  key ~M0-M3-*H = $PERCENT_SIGN  # %
+
+  key ~M0-M3-*U = $AMPERSAND     # &
+  key ~M0-M3-*I = $ASTERISK      # *
+  key ~M0-M3-*O = $CIRCUMFLEX_ACCENT  # ^
+
+  key ~M0-M3-*N = $PLUS_SIGN       # +
+  key ~M0-M3-*M = $HYPHEN-MINUS    # -
+  key ~M0-M3-*Comma = $EQUALS_SIGN # =
+
+  key ~M0-M3-*_9 = $LEFT_PARENTHESIS   # (
+  key ~M0-M3-*_0 = #RIGHT_PARENTHESIS  # )
+  key ~M0-M3-*Atmark = $LEFT_CURLY_BRACKET        # {
+  key ~M0-M3-*OpenBracket = $RIGHT_CURLY_BRACKET  # }
+
+  key ~M0-M3-*FullStop = $GRAVE_ACCENT  # `
+  def subst ~M0-M3-*Colon = $TILDE  # ~
+endif
+
+if ( MOD4 )
+  if ( MOD4_SEMICOLON )
+    mod mod4 += !!Semicolon
+    key R-*Semicolon = &Ignore
+    def subst ~M3-M4-*IC-*Semicolon = *Semicolon
+  endif
+endif
+
+if ( MOD4 )
+  key M4-*E = *Up
+  key M4-*S = *Left
+  key M4-*D = *Down
+  key M4-*F = *Right
+  key M4-W = A-Left
+  key M4-R = A-Right
+
+  key M4-C = C-Insert
+  key M4-V = S-Insert
+
+  key M4-A = S-W-A
+  key M4-Z = S-W-Z
+
+  key M4-G = &WindowHMaximize
+  key M4-B = &WindowVMaximize
 endif
 
 if ( USE104on109mix )
