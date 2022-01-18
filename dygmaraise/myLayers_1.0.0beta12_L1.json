@@ -43,8 +43,9 @@
   ],
   "keymap": [
     {
-      "keyCode": 41,
-      "label": "ESC"
+      "keyCode": 52283,
+      "label": "ESC",
+      "extraLabel": "L#5/"
     },
     {
       "keyCode": 30,
@@ -112,9 +113,9 @@
       "verbose": "Backspace"
     },
     {
-      "keyCode": 52285,
+      "keyCode": 52541,
       "label": "TAB",
-      "extraLabel": "L#5/"
+      "extraLabel": "L#6/"
     },
     {
       "keyCode": 20,
@@ -241,8 +242,9 @@
       "label": "L"
     },
     {
-      "keyCode": 51,
-      "label": ";"
+      "keyCode": 51525,
+      "label": ";",
+      "extraLabel": "L#2/"
     },
     {
       "keyCode": 52,
@@ -317,8 +319,9 @@
       "label": "."
     },
     {
-      "keyCode": 56,
-      "label": "/"
+      "keyCode": 49481,
+      "label": "/",
+      "extraLabel": "SHIFT/"
     },
     {
       "keyCode": 82,
@@ -371,9 +374,9 @@
       "extraLabel": "CTRL/"
     },
     {
-      "keyCode": 51516,
-      "label": "BACKSPACE",
-      "extraLabel": "L#2/"
+      "keyCode": 49167,
+      "label": "7",
+      "extraLabel": "OSL"
     },
     {
       "keyCode": 49469,
