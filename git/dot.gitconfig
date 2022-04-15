@@ -39,6 +39,8 @@
 	today-change = diff --name-status -M -C -C @{yesterday}..HEAD
 	today-changelog = log --name-status -M -C -C @{yesterday}..HEAD
 	wipe = clean -e .hg/ -e .hgignore -d
+	wipe0 = wipe -e files.find -e files.ctags -e tags -e mklist.sh -e *.cr.mti -e *.mpf
+	wipe1 = wipe0 -e packages/ -e bin/ -e obj/ -e .vs/ -e work/ -e transcript -e modelsim.ini
 [color]
 	branch = auto
 	diff = auto
@@ -69,6 +71,10 @@
 [diff]
 	#guitool = gvimdiff
 	guitool = winmerge
+[diff "hex"]
+	textconv = od -A x -c -t x1z -v
+[diff "excel"]
+	command = C:/path/to/ExcelCompare-0.6.1/bin/excel_cmp
 [difftool]
 	prompt = true
 [difftool "vimdiff"]
@@ -81,10 +87,19 @@
 	# See http://ptech.g.hatena.ne.jp/noromanba/20120602/1338633091
 	path = C:/Program Files/WinMerge/WinMergeU
 	cmd = \"C:/Program Files/WinMerge/WinMergeU\" -e -ub -dl \"Base\" -dr \"Mine\" \"$LOCAL\" \"$REMOTE\"
+[difftool "winmergedirdiff"]
+	# See http://tech.nitoyon.com/ja/blog/2013/07/02/git-dir-diff/
+	# git diff --dir-diff で呼び出すと、WinMergeの画面でいい感じにツリー表示される
+	path = C:/Program Files/WinMerge/WinMergeU
+	cmd = \"C:/Program Files/WinMerge/WinMergeU\" -r -u -e -wl -wr -ub -dl \"Base\" -dr \"Mine\" \"$LOCAL\" \"$REMOTE\"
+#[difftool "excelmerge"]
+#	cmd = \"C:/Program Files (x86)/ExcelMerge/ExcelMerge.GUI.exe\" diff -s \"$LOCAL\" -d \"$REMOTE\" -c WinMerge -i -w -v -k
+#[difftool "vscode"]
+#	cmd = code --diff --wait \"$REMOTE\" \"$LOCAL\"
 [merge]
 	tool = TortoiseMerge
-[mergetool "gvimdiff"]
-	path = /usr/local/bin/vimdiff
+#[mergetool "gvimdiff"]
+#	path = /usr/local/bin/vimdiff
 [mergetool "TortoiseMerge"]
 	path = C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe
 	cmd = \"C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe\" -base:\"$BASE\" -mine:\"$LOCAL\" -theirs:\"$REMOTE\" -merged:\"$MERGED\"
